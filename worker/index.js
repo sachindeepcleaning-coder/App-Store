@@ -632,11 +632,13 @@ export class LoginGuard {
     this.env = env;
   }
 
-  static backoffFor(fails) {
-    if (fails <= 3) return 0;
-    if (fails <= 5) return 10;
-    if (fails <= 8) return 60;
-    if (fails <= 12) return 300;
+  backoffFor(fails) {
+    const free = parseInt(this.env.LOCKOUT_FREE_ATTEMPTS || '3', 10);
+    const base = Number.isFinite(free) && free >= 0 ? free : 3;
+    if (fails <= base) return 0;
+    if (fails <= base + 2) return 10;
+    if (fails <= base + 5) return 60;
+    if (fails <= base + 9) return 300;
     return 900;
   }
 
@@ -659,7 +661,7 @@ export class LoginGuard {
       state = { fails: 0, blockedUntil: 0 };
     } else {
       state.fails = (Number(state.fails) || 0) + 1;
-      const wait = LoginGuard.backoffFor(state.fails);
+      const wait = this.backoffFor(state.fails);
       state.blockedUntil = wait ? now + wait * 1000 : 0;
     }
     await this.state.storage.put('lock', state);
