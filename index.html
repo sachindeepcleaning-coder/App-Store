@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sachin Deep Cleaning</title>
+<meta name="description" content="Sachin Deep Cleaning - professional deep cleaning services for homes, offices and commercial spaces. Reliable, affordable and thorough. Book a free quote today.">
+<meta name="theme-color" content="#0f766e">
+<meta property="og:title" content="Sachin Deep Cleaning">
+<meta property="og:description" content="Professional deep cleaning services for homes, offices and commercial spaces.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sachinapp.store/">
+<link rel="canonical" href="https://sachinapp.store/">
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --teal-900: #0b3b38;
+    --teal-700: #0f766e;
+    --teal-600: #12907f;
+    --teal-100: #d7f2ee;
+    --teal-50: #f0fbf9;
+    --amber-500: #f59e0b;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-200: #e2e8f0;
+    --white: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.10);
+    --radius: 14px;
+    --container: 1140px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+    color: var(--slate-700);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--slate-200);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 70px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--teal-900);
+    letter-spacing: -0.01em;
+  }
+
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal-600), var(--teal-900));
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  .nav a:not(.btn) {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--slate-700);
+    transition: color 0.2s ease;
+  }
+
+  .nav a:not(.btn):hover,
+  .nav a:not(.btn):focus-visible {
+    color: var(--teal-700);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: var(--teal-700);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-primary:hover {
+    background: var(--teal-600);
+  }
+
+  .btn-outline {
+    border-color: var(--teal-700);
+    color: var(--teal-700);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background: var(--teal-50);
+  }
+
+  .btn-ghost {
+    background: var(--white);
+    color: var(--teal-900);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-ghost:hover {
+    background: var(--teal-50);
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--teal-900) 0%, var(--teal-700) 55%, var(--teal-600) 100%);
+    color: var(--white);
+    padding: 92px 0 104px;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -140px;
+    top: -140px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    left: -100px;
+    bottom: -180px;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.14);
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.1rem, 5.2vw, 3.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+
+  .hero p {
+    font-size: 1.08rem;
+    color: rgba(255, 255, 255, 0.86);
+    max-width: 54ch;
+    margin-bottom: 32px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .hero-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(6, 20, 30, 0.28);
+  }
+
+  .hero-card h2 {
+    font-size: 1.15rem;
+    color: var(--teal-900);
+    margin-bottom: 18px;
+  }
+
+  .stat-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--slate-200);
+  }
+
+  .stat:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--teal-700);
+    min-width: 74px;
+  }
+
+  .stat-label {
+    font-size: 0.92rem;
+    color: var(--slate-500);
+  }
+
+  .section {
+    padding: 84px 0;
+  }
+
+  .section-alt {
+    background: var(--teal-50);
+  }
+
+  .section-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 52px;
+  }
+
+  .section-head .eyebrow {
+    background: var(--teal-100);
+    border-color: transparent;
+    color: var(--teal-900);
+    margin-bottom: 16px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--teal-900);
+    margin-bottom: 14px;
+  }
+
+  .section-head p {
+    color: var(--slate-500);
+    font-size: 1.02rem;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(265px, 100%), 1fr));
+    gap: 26px;
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--teal-100);
+  }
+
+  .card-icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--teal-100);
+    color: var(--teal-900);
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+  }
+
+  .card h3 {
+    font-size: 1.15rem;
+    color: var(--teal-900);
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    color: var(--slate-500);
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+  }
+
+  .card-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--teal-700);
+  }
+
+  .card-link:hover {
+    text-decoration: underline;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 44px;
+    align-items: start;
+  }
+
+  .contact-grid > * {
+    min-width: 0;
+  }
+
+  .contact-list {
+    display: grid;
+    gap: 18px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-item:hover {
+    border-color: var(--teal-100);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .contact-icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 50%;
+    background: var(--teal-700);
+    color: var(--white);
+    font-size: 1.1rem;
+  }
+
+  .contact-text {
+    min-width: 0;
+  }
+
+  .contact-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--slate-500);
+    margin-bottom: 2px;
+  }
+
+  .contact-value {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--teal-900);
+    overflow-wrap: anywhere;
+  }
+
+  .contact-value:hover {
+    color: var(--teal-600);
+  }
+
+  .contact-note {
+    background: var(--teal-900);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: var(--radius);
+    padding: 34px;
+  }
+
+  .contact-note h3 {
+    font-size: 1.3rem;
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+
+  .contact-note p {
+    margin-bottom: 24px;
+    font-size: 0.98rem;
+  }
+
+  .contact-note .btn {
+    width: 100%;
+  }
+
+  .site-footer {
+    background: var(--teal-900);
+    color: rgba(255, 255, 255, 0.72);
+    padding: 34px 0;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .footer-inner p {
+    font-size: 0.9rem;
+  }
+
+  .footer-inner a {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  .footer-inner a:hover {
+    text-decoration: underline;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .header-inner {
+      min-height: 62px;
+      flex-wrap: nowrap;
+      gap: 10px;
+    }
+
+    .brand {
+      font-size: 1rem;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      flex-basis: 34px;
+    }
+
+    .nav {
+      margin-left: auto;
+      gap: 16px;
+    }
+
+    .nav a:not(.btn) {
+      font-size: 0.88rem;
+    }
+
+    .nav .btn {
+      padding: 10px 18px;
+      font-size: 0.88rem;
+    }
+
+    .contact-value {
+      font-size: 0.9rem;
+    }
+
+    .contact-item {
+      padding: 18px 20px;
+      gap: 12px;
+    }
+
+    .hero {
+      padding: 64px 0 72px;
+    }
+
+    .section {
+      padding: 62px 0;
+    }
+
+    .section-head {
+      margin-bottom: 36px;
+    }
+
+    .footer-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .nav a:not(.btn) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .contact-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">SD</span>
+      <span>Sachin Deep Cleaning</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+      <a class="btn btn-primary" href="tel:+919214004664">Call Now</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="eyebrow">Trusted since day one</span>
+        <h1>Deep cleaning that leaves no corner untouched</h1>
+        <p>From kitchens and bathrooms to full office sanitisation, our trained team brings the sparkle back to your space — on time, every time.</p>
+        <div class="hero-actions">
+          <a class="btn btn-ghost" href="#contact">Get a Free Quote</a>
+          <a class="btn btn-outline" href="tel:+919214004664" style="border-color: rgba(255,255,255,0.6); color: #fff;">Call +91 9214004664</a>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <h2>Why people choose us</h2>
+        <div class="stat-list">
+          <div class="stat">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Satisfaction on every job</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">5+</span>
+            <span class="stat-label">Years of hands-on experience</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">24h</span>
+            <span class="stat-label">Turnaround on service requests</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">Eco</span>
+            <span class="stat-label">Safe, family-friendly products</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">What we do</span>
+        <h2>Our cleaning services</h2>
+        <p>Tailored packages for homes, workplaces and commercial properties. Pick what you need and we will handle the rest.</p>
+      </div>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🏠</div>
+          <h3>Home Deep Cleaning</h3>
+          <p>Detailed cleaning for every room, including kitchen grease, bathroom sanitisation, dusting and a thorough floor mop.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🏢</div>
+          <h3>Office &amp; Commercial</h3>
+          <p>Workstations, conference rooms, cabins and common areas cleaned after hours so your team never loses a minute.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🧼</div>
+          <h3>Post-Renovation</h3>
+          <p>Pressure-level scrubbing, dust removal and paint spot cleaning to make a freshly finished space truly move-in ready.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🧴</div>
+          <h3>Sofa &amp; Carpet Care</h3>
+          <p>Deep vacuuming, stain lifting and fabric shampooing that restores upholstery and carpets to their original shine.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🍽️</div>
+          <h3>Kitchen &amp; Appliances</h3>
+          <p>Degreasing, descaling and interior appliance cleaning with safe products that keep your kitchen truly hygienic.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon" aria-hidden="true">🔁</div>
+          <h3>Recurring Plans</h3>
+          <p>Weekly, fortnightly or monthly schedules at a fixed monthly rate, with the same trusted team each visit.</p>
+          <a class="card-link" href="#contact">Enquire now →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" id="contact">
+    <div class="container contact-grid">
+      <div>
+        <div class="section-head reveal" style="text-align: left; margin: 0 0 32px;">
+          <span class="eyebrow">Get in touch</span>
+          <h2>Book your cleaning today</h2>
+          <p>Tell us what you need and we will send a clear, upfront quote — no hidden charges, no surprises.</p>
+        </div>
+        <div class="contact-list reveal">
+          <a class="contact-item" href="mailto:sachindeepcleaning@gmail.com">
+            <span class="contact-icon" aria-hidden="true">✉</span>
+            <span class="contact-text">
+              <span class="contact-label">Email us</span>
+              <span class="contact-value">sachindeepcleaning@gmail.com</span>
+            </span>
+          </a>
+          <a class="contact-item" href="tel:+919214004664">
+            <span class="contact-icon" aria-hidden="true">☎</span>
+            <span class="contact-text">
+              <span class="contact-label">Call us</span>
+              <span class="contact-value">+91 9214004664</span>
+            </span>
+          </a>
+          <div class="contact-item">
+            <span class="contact-icon" aria-hidden="true">🕘</span>
+            <span class="contact-text">
+              <span class="contact-label">Working hours</span>
+              <span class="contact-value">Mon – Sat, 9:00 AM – 8:00 PM</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-note reveal">
+        <h3>Ready for a spotless space?</h3>
+        <p>Send us a quick message with your location and the type of cleaning you need. We will get back to you with a free, no-obligation quote within 24 hours.</p>
+        <a class="btn btn-ghost" href="mailto:sachindeepcleaning@gmail.com?subject=Cleaning%20Quote%20Request">Request a Free Quote</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>&copy; <span id="year">2026</span> Sachin Deep Cleaning. All rights reserved.</p>
+    <p>Call <a href="tel:+919214004664">+91 9214004664</a> &middot; <a href="mailto:sachindeepcleaning@gmail.com">sachindeepcleaning@gmail.com</a></p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var yearEl = document.getElementById('year');
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
+    }
+
+    var reveals = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || !reveals.length) {
+      reveals.forEach(function (el) { el.classList.add('visible'); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(function (el) { observer.observe(el); });
+  })();
+</script>
+</body>
+</html>
