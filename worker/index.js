@@ -7,10 +7,19 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type, x-store-token, x-app-meta'
 };
 
+const SECURITY = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'no-referrer',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+};
+
 const MAX_WORKER_UPLOAD = 95 * 1024 * 1024;
 const SESSION_TTL = 60 * 60 * 1000;
+const REMEMBER_TTL = 30 * 24 * 60 * 60 * 1000;
 const TICKET_TTL = 15 * 60 * 1000;
 const CATALOGUE_FILE = 'catalogue.json';
+const AUTH_PAYLOADS = ['session', 'remember'];
 
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -18,6 +27,7 @@ function json(data, status = 200, extraHeaders = {}) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
+      ...SECURITY,
       ...CORS,
       ...extraHeaders
     }
@@ -75,9 +85,26 @@ async function verifyToken(env, token, payload) {
   const [expiryRaw, tokenPayload, sig] = parts;
   const expiry = Number(expiryRaw);
   if (!Number.isFinite(expiry) || expiry < Date.now()) return false;
-  if (payload !== undefined && tokenPayload !== payload) return false;
+  if (payload !== undefined) {
+    const allowed = Array.isArray(payload) ? payload : [payload];
+    if (allowed.indexOf(tokenPayload) === -1) return false;
+  }
   const expected = await hmacHex(env.TOKEN_SECRET, `${expiryRaw}.${tokenPayload}`);
   return constantTimeEqual(expected, sig);
+}
+
+async function takeLimit(env, binding, key) {
+  if (!env || !env[binding] || typeof env[binding].limit !== 'function') return true;
+  try {
+    const result = await env[binding].limit({ key: String(key || 'anon') });
+    return !!result.success;
+  } catch (e) {
+    return true;
+  }
+}
+
+function clientKey(request) {
+  return request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || 'anon';
 }
 
 async function checkPassword(env, password) {
@@ -86,6 +113,13 @@ async function checkPassword(env, password) {
   const expected = String(env.STORE_PASSWORD);
   if (given.length !== expected.length) return false;
   return constantTimeEqual(given, expected);
+}
+
+function passwordPolicy(env) {
+  const min = parseInt(env.PASSWORD_MIN_LENGTH || '10', 10) || 10;
+  const stored = String(env.STORE_PASSWORD || '');
+  const weak = stored.length < min;
+  return { min, weak, length: stored.length };
 }
 
 function ghHeaders(env, extra = {}) {
@@ -145,7 +179,16 @@ async function writeCatalogue(env, items) {
     sha = existing.sha;
   }
   if (sha) body.sha = sha;
-  return ghJson(env, repoPath(env, `/contents/${CATALOGUE_FILE}`), { method: 'PUT', body });
+
+  try {
+    return await ghJson(env, repoPath(env, `/contents/${CATALOGUE_FILE}`), { method: 'PUT', body });
+  } catch (err) {
+    const conflict = err && (err.status === 409 || err.status === 422);
+    if (!conflict) throw err;
+    const current = await readCatalogue(env);
+    body.sha = current.sha;
+    return ghJson(env, repoPath(env, `/contents/${CATALOGUE_FILE}`), { method: 'PUT', body });
+  }
 }
 
 function slugify(value) {
@@ -154,6 +197,13 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60) || 'app';
+}
+
+function safeFileName(value) {
+  return String(value || '')
+    .replace(/[^\w.\- ]/g, '_')
+    .replace(/^\.+/, '')
+    .slice(0, 120) || 'download';
 }
 
 function formatSize(bytes) {
@@ -200,10 +250,11 @@ async function streamAsset(env, entry) {
   }
   const headers = new Headers();
   headers.set('Content-Type', 'application/octet-stream');
-  headers.set('Content-Disposition', `attachment; filename="${(entry.fileName || entry.file || 'download').replace(/"/g, '')}"`);
+  headers.set('Content-Disposition', `attachment; filename="${safeFileName(entry.fileName || entry.file || 'download')}"`);
   const length = res.headers.get('content-length');
   if (length) headers.set('Content-Length', length);
   headers.set('Cache-Control', 'private, no-store');
+  Object.keys(SECURITY).forEach((key) => headers.set(key, SECURITY[key]));
   return new Response(res.body, { status: 200, headers });
 }
 
@@ -219,17 +270,19 @@ export default {
       const tokenHeader = request.headers.get('x-store-token') || '';
 
       if (url.pathname === '/' && request.method === 'GET') {
+        const policy = passwordPolicy(env);
         return json({
           ok: true,
           service: 'sachin-app-store',
           repo: `${env.GITHUB_OWNER}/${env.GITHUB_REPO}`,
           maxWorkerUpload: MAX_WORKER_UPLOAD,
-          requires: ['session', 'upload', 'file', 'share']
+          passwordPolicy: { minLength: policy.min, currentLength: policy.length, acceptable: !policy.weak },
+          requires: ['session', 'remember', 'upload', 'file', 'share']
         });
       }
 
       if (url.pathname === '/catalogue' && request.method === 'GET') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Unlock the store to see the catalogue.', 401);
         }
         const { items } = await readCatalogue(env);
@@ -252,6 +305,13 @@ export default {
       }
 
       if (url.pathname === '/session' && request.method === 'POST') {
+        if (!(await takeLimit(env, 'LOGIN_LIMITER', clientKey(request)))) {
+          return fail('Too many attempts. Wait a minute and try again.', 429);
+        }
+        const policy = passwordPolicy(env);
+        if (policy.weak) {
+          return fail('The store password is too short. Set a longer one with: npx wrangler secret put STORE_PASSWORD', 503);
+        }
         let body = {};
         try { body = await request.json(); } catch (e) { body = {}; }
         if (!(await checkPassword(env, body.password))) {
@@ -261,9 +321,29 @@ export default {
         return json({ ok: true, token, expires: Date.now() + SESSION_TTL });
       }
 
+      if (url.pathname === '/remember' && request.method === 'POST') {
+        if (!(await takeLimit(env, 'LOGIN_LIMITER', clientKey(request)))) {
+          return fail('Too many attempts. Wait a minute and try again.', 429);
+        }
+        const policy = passwordPolicy(env);
+        if (policy.weak) {
+          return fail('The store password is too short. Set a longer one with: npx wrangler secret put STORE_PASSWORD', 503);
+        }
+        let body = {};
+        try { body = await request.json(); } catch (e) { body = {}; }
+        if (!(await checkPassword(env, body.password))) {
+          return fail('Incorrect password.', 401);
+        }
+        const token = await signToken(env, 'remember', REMEMBER_TTL);
+        return json({ ok: true, token, expires: Date.now() + REMEMBER_TTL });
+      }
+
       if (url.pathname === '/upload' && request.method === 'POST') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        if (!(await takeLimit(env, 'WRITE_LIMITER', clientKey(request)))) {
+          return fail('Too many requests. Slow down a moment and try again.', 429);
         }
         let meta = {};
         try { meta = JSON.parse(request.headers.get('x-app-meta') || '{}'); } catch (e) { meta = {}; }
@@ -280,7 +360,7 @@ export default {
 
         const id = slugify(meta.id || meta.name);
         const version = String(meta.version || '1.0.0');
-        const fileName = String(meta.fileName || `${id}-${version}.bin`).replace(/[^\w.\- ]/g, '_');
+        const fileName = safeFileName(meta.fileName || `${id}-${version}.bin`);
         const tag = `${id}-v${version}-${Date.now()}`;
 
         const release = await ghJson(env, repoPath(env, '/releases'), {
@@ -342,8 +422,11 @@ export default {
       }
 
       if (url.pathname === '/release' && request.method === 'POST') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        if (!(await takeLimit(env, 'WRITE_LIMITER', clientKey(request)))) {
+          return fail('Too many requests. Slow down a moment and try again.', 429);
         }
         let meta = {};
         try { meta = JSON.parse(request.headers.get('x-app-meta') || '{}'); } catch (e) { meta = {}; }
@@ -364,12 +447,17 @@ export default {
       }
 
       if (url.pathname === '/catalogue' && request.method === 'POST') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        if (!(await takeLimit(env, 'WRITE_LIMITER', clientKey(request)))) {
+          return fail('Too many requests. Slow down a moment and try again.', 429);
         }
         let payload = {};
         try { payload = await request.json(); } catch (e) { payload = {}; }
         if (!payload.entry || !payload.entry.id) return fail('Missing app entry.', 400);
+        if (payload.entry.fileName) payload.entry.fileName = safeFileName(payload.entry.fileName);
+        if (payload.entry.id) payload.entry.id = slugify(payload.entry.id);
 
         const { items, sha } = await readCatalogue(env);
         const next = items.filter((item) => item.id !== payload.entry.id);
@@ -380,8 +468,11 @@ export default {
       }
 
       if (url.pathname === '/share' && request.method === 'POST') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        if (!(await takeLimit(env, 'WRITE_LIMITER', clientKey(request)))) {
+          return fail('Too many requests. Slow down a moment and try again.', 429);
         }
         let payload = {};
         try { payload = await request.json(); } catch (e) { payload = {}; }
@@ -390,11 +481,38 @@ export default {
 
         const shareId = payload.rotate || !entry.shareId ? randomId(12) : entry.shareId;
         entry.shareId = shareId;
+        entry.shareExpires = null;
+        if (payload.expiresInDays) {
+          const days = Math.min(Math.max(parseInt(payload.expiresInDays, 10) || 0, 1), 365);
+          entry.shareExpires = Date.now() + days * 24 * 60 * 60 * 1000;
+        }
         const next = items.filter((item) => item.id !== entry.id);
         next.push(entry);
         next.__sha = sha;
         await writeCatalogue(env, next);
-        return json({ ok: true, shareId, url: `${url.origin}/share/${shareId}` });
+        return json({
+          ok: true,
+          shareId,
+          url: `${url.origin}/share/${shareId}`,
+          expires: entry.shareExpires || null
+        });
+      }
+
+      if (url.pathname.startsWith('/share/') && request.method === 'DELETE') {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
+          return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        const shareId = decodeURIComponent(url.pathname.slice('/share/'.length));
+        const { items, sha } = await readCatalogue(env);
+        const target = items.find((item) => item.shareId && item.shareId === shareId);
+        if (!target) return fail('That share link is not valid.', 404);
+        delete target.shareId;
+        delete target.shareExpires;
+        const next = items.filter((item) => item.id !== target.id);
+        next.push(target);
+        next.__sha = sha;
+        await writeCatalogue(env, next);
+        return json({ ok: true, revoked: shareId });
       }
 
       if (url.pathname.startsWith('/file/') && request.method === 'GET') {
@@ -409,8 +527,11 @@ export default {
       }
 
       if (url.pathname.startsWith('/ticket/') && request.method === 'POST') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
+        }
+        if (!(await takeLimit(env, 'WRITE_LIMITER', clientKey(request)))) {
+          return fail('Too many requests. Slow down a moment and try again.', 429);
         }
         let payload = {};
         try { payload = await request.json(); } catch (e) { payload = {}; }
@@ -426,11 +547,14 @@ export default {
         const shareId = decodeURIComponent(url.pathname.slice('/share/'.length));
         const { entry } = await findByShareId(env, shareId);
         if (!entry) return fail('That share link is not valid.', 404);
+        if (entry.shareExpires && Date.now() > Number(entry.shareExpires)) {
+          return fail('That share link has expired.', 410);
+        }
         return streamAsset(env, entry);
       }
 
       if (url.pathname.startsWith('/file/') && request.method === 'DELETE') {
-        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+        if (!(await verifyToken(env, tokenHeader, AUTH_PAYLOADS))) {
           return fail('Your session has expired. Unlock the store again.', 401);
         }
         const id = decodeURIComponent(url.pathname.slice('/file/'.length));

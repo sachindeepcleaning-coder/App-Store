@@ -2,34 +2,28 @@ window.Vault = (function () {
   'use strict';
 
   var CONFIG = window.STORE_CONFIG || {};
-  var PASSWORD_KEY = CONFIG.passwordStorageKey || 'sasin-appstore-password';
+  var REMEMBER_KEY = 'sasin-appstore-remember';
   var TOKEN_KEY = 'sasin-appstore-token';
   var TOKEN_EXPIRES_KEY = 'sasin-appstore-token-expires';
-  var DEFAULT_URL = 'https://app-store.sachin-cleaner.workers.dev';
+  var DEFAULT_URL = 'https://app-store.sachindeepcleaning.workers.dev';
   var MAX_WORKER_UPLOAD = 95 * 1024 * 1024;
 
   function workerUrl() {
-    var stored = '';
-    try { stored = window.localStorage.getItem('sasin-appstore-worker') || ''; } catch (e) { stored = ''; }
-    return (stored || CONFIG.workerUrl || DEFAULT_URL).replace(/\/+$/, '');
+    return String(CONFIG.workerUrl || DEFAULT_URL).replace(/\/+$/, '');
   }
 
-  function setWorkerUrl(url) {
-    try { window.localStorage.setItem('sasin-appstore-worker', String(url || '').replace(/\/+$/, '')); } catch (e) { /* ignore */ }
+  function rememberToken() {
+    try { return window.localStorage.getItem(REMEMBER_KEY) || ''; } catch (e) { return ''; }
   }
 
-  function password() {
-    try { return window.localStorage.getItem(PASSWORD_KEY) || ''; } catch (e) { return ''; }
-  }
-
-  function setPassword(value) {
+  function setRememberToken(value) {
     try {
-      if (value) window.localStorage.setItem(PASSWORD_KEY, value);
-      else window.localStorage.removeItem(PASSWORD_KEY);
+      if (value) window.localStorage.setItem(REMEMBER_KEY, value);
+      else window.localStorage.removeItem(REMEMBER_KEY);
     } catch (e) { /* ignore */ }
   }
 
-  function token() {
+  function sessionToken() {
     try {
       var stored = window.sessionStorage.getItem(TOKEN_KEY) || '';
       var expires = Number(window.sessionStorage.getItem(TOKEN_EXPIRES_KEY) || 0);
@@ -38,14 +32,14 @@ window.Vault = (function () {
     return '';
   }
 
-  function setToken(value, expires) {
+  function setSessionToken(value, expires) {
     try {
       window.sessionStorage.setItem(TOKEN_KEY, value || '');
       window.sessionStorage.setItem(TOKEN_EXPIRES_KEY, String(expires || 0));
     } catch (e) { /* ignore */ }
   }
 
-  function clearToken() {
+  function clearSessionToken() {
     try {
       window.sessionStorage.removeItem(TOKEN_KEY);
       window.sessionStorage.removeItem(TOKEN_EXPIRES_KEY);
@@ -94,23 +88,28 @@ window.Vault = (function () {
 
   function unlock(pass) {
     return request('/session', { method: 'POST', json: { password: pass } }).then(function (data) {
-      setPassword(pass);
-      setToken(data.token, data.expires);
+      setSessionToken(data.token, data.expires);
+      return data;
+    });
+  }
+
+  function remember(pass) {
+    return request('/remember', { method: 'POST', json: { password: pass } }).then(function (data) {
+      setRememberToken(data.token);
       return data;
     });
   }
 
   function isUnlocked() {
-    return !!token();
+    return !!(sessionToken() || rememberToken());
   }
 
   function ensureToken() {
-    if (token()) return Promise.resolve(token());
-    var pass = password();
-    if (!pass) {
-      return Promise.reject(new Error('Unlock the private store first.'));
-    }
-    return unlock(pass).then(function () { return token(); });
+    var session = sessionToken();
+    if (session) return Promise.resolve(session);
+    var remembered = rememberToken();
+    if (remembered) return Promise.resolve(remembered);
+    return Promise.reject(new Error('Unlock the private store first.'));
   }
 
   function catalogue() {
@@ -201,9 +200,20 @@ window.Vault = (function () {
     });
   }
 
-  function share(id, rotate) {
+  function share(id, options) {
+    var opts = options || {};
     return ensureToken().then(function (tok) {
-      return request('/share', { method: 'POST', token: tok, json: { id: id, rotate: !!rotate } });
+      return request('/share', {
+        method: 'POST',
+        token: tok,
+        json: { id: id, rotate: !!opts.rotate, expiresInDays: opts.expiresInDays || 0 }
+      });
+    });
+  }
+
+  function revokeShare(shareId) {
+    return ensureToken().then(function (tok) {
+      return request('/share/' + encodeURIComponent(shareId), { method: 'DELETE', token: tok });
     });
   }
 
@@ -218,16 +228,17 @@ window.Vault = (function () {
   }
 
   function lock() {
-    clearToken();
+    clearSessionToken();
+    setRememberToken('');
   }
 
   return {
     workerUrl: workerUrl,
-    setWorkerUrl: setWorkerUrl,
-    password: password,
-    setPassword: setPassword,
-    token: token,
+    rememberToken: rememberToken,
+    setRememberToken: setRememberToken,
+    sessionToken: sessionToken,
     unlock: unlock,
+    remember: remember,
     isUnlocked: isUnlocked,
     lock: lock,
     catalogue: catalogue,
@@ -235,6 +246,7 @@ window.Vault = (function () {
     uploadLarge: uploadLarge,
     ticket: ticket,
     share: share,
+    revokeShare: revokeShare,
     shareUrl: shareUrl,
     remove: remove,
     maxWorkerUpload: MAX_WORKER_UPLOAD

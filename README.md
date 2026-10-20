@@ -21,7 +21,29 @@ The site itself is a login screen. Nothing about your apps is in the page: the a
 
 ## Signing in
 
-Open the site and you get a password prompt. The password is checked by the Worker, not by the page, so it is never embedded in the HTML. Tick **Remember on this device** and the site signs itself back in on later visits; leave it unticked and you are asked every time. Sessions expire after an hour either way.
+Open the site and you get a password prompt. The password is checked by the Worker, not by the page, so it is never embedded in the HTML.
+
+Tick **Remember on this device** and the Worker issues a long-lived signed token that the browser stores; your actual password is **never** written to disk anywhere. Leave it unticked and you are asked every time. Either way, sessions expire after an hour.
+
+## What guards the store
+
+| Control | Detail |
+| --- | --- |
+| Password | Checked by the Worker against a secret. Never in the page, never in the browser storage, never in a URL or a log. |
+| Password policy | The Worker refuses to run if the stored password is under 10 characters. |
+| Rate limiting | Login attempts are throttled per client. Excessive attempts get `429`. |
+| Login attempt cap | 5 password attempts per 60 seconds. |
+| Write attempts | 30 catalogue or upload operations per 60 seconds. |
+| Session token | Signed, scoped to the store, 1 hour. |
+| Remember token | Signed, scoped to the store, 30 days, revocable by changing the store password. |
+| Download ticket | Signed, scoped to one file, 15 minutes. |
+| Share links | Random 96-bit ids, expire in 30 days, revocable with one click. |
+| Content-Security-Policy | `default-src 'none'`, scripts and styles from self only, connections limited to the store and GitHub. |
+| Response headers | `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Permissions-Policy`. |
+| Catalogue | Lives in the private repository, written atomically, retried on conflict. |
+| Filenames | Sanitised at every point where they are stored or placed in a header. |
+
+The Worker origin is pinned in both `config.js` and the CSP, so the page can only ever talk to one store. To move it, change both.
 
 ## Where you can store an upload
 

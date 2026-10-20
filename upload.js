@@ -91,13 +91,12 @@
   }
 
   function refreshVaultStatus() {
-    var pass = vault.password();
+    var remembered = vault.rememberToken();
     vaultStatus.textContent = vault.isUnlocked()
       ? 'Unlocked. Uploads and downloads will use your password.'
-      : (pass
-        ? 'Password remembered on this device. It unlocks automatically.'
-        : 'No password saved yet.');
-    if (!vaultPassword.value && pass) vaultPassword.value = pass;
+      : (remembered
+        ? 'Signed in on this device. It unlocks automatically.'
+        : 'Not signed in yet.');
   }
 
   function switchDest(next) {
@@ -197,20 +196,11 @@
     showProgress('');
     if (!requireFileAndName()) return;
 
-    var url = (workerUrlInput.value || '').trim() || vault.workerUrl();
-    vault.setWorkerUrl(url);
-
     var pass = vaultPassword.value.trim();
     if (!pass) {
       showError('Enter your private store password.');
       return;
     }
-    if (!vaultRemember.checked) {
-      vault.setPassword('');
-    } else {
-      vault.setPassword(pass);
-    }
-
     var meta = readMeta();
     meta.fileName = pickedFile.name;
 
@@ -286,7 +276,6 @@
   });
 
   el('vaultClear').addEventListener('click', function () {
-    vault.setPassword('');
     vault.lock();
     vaultPassword.value = '';
     refreshVaultStatus();
@@ -295,18 +284,11 @@
   el('vaultUnlock').addEventListener('click', function () {
     showError('');
     showProgress('');
-    var url = (workerUrlInput.value || '').trim();
-    if (url) vault.setWorkerUrl(url);
 
     var pass = vaultPassword.value.trim();
     if (!pass) {
       showError('Enter your private store password.');
       return;
-    }
-    if (vaultRemember.checked) {
-      vault.setPassword(pass);
-    } else {
-      vault.setPassword('');
     }
 
     el('vaultUnlock').disabled = true;
