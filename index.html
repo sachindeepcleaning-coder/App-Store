@@ -647,6 +647,258 @@
     transform: translate(-50%, 0);
   }
 
+  dialog.modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(640px, calc(100vw - 32px));
+    max-height: calc(100vh - 40px);
+    padding: 0;
+    border: 1px solid var(--line-hi);
+    border-radius: 20px;
+    background: var(--bg-soft);
+    color: var(--text);
+    box-shadow: 0 30px 80px rgba(2, 6, 20, 0.72);
+    overflow: hidden;
+  }
+
+  dialog.modal::backdrop {
+    background: rgba(4, 8, 18, 0.74);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-card {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 40px);
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .modal-head h2 {
+    font-size: 1.12rem;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 1.2rem;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .icon-btn:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .modal-body {
+    padding: 22px;
+    overflow-y: auto;
+    display: grid;
+    gap: 16px;
+  }
+
+  .dropzone {
+    display: grid;
+    place-items: center;
+    gap: 6px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 2px dashed var(--line-hi);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .dropzone:hover,
+  .dropzone.dragging {
+    border-color: var(--accent);
+    background: rgba(124, 92, 255, 0.10);
+  }
+
+  .dropzone.has-file {
+    border-style: solid;
+    border-color: rgba(52, 211, 153, 0.55);
+  }
+
+  .dropzone-title {
+    font-weight: 600;
+  }
+
+  .dropzone-hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .file-info {
+    font-size: 0.84rem;
+    color: var(--accent-2);
+    overflow-wrap: anywhere;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+
+  .field label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--line-hi);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.92rem;
+    outline: none;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.16);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 72px;
+  }
+
+  .field select {
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .token-panel {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .token-panel summary {
+    padding: 12px 15px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .token-panel.open summary {
+    color: var(--text);
+  }
+
+  .token-body {
+    padding: 0 15px 15px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .token-status {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .token-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .checkbox input {
+    accent-color: var(--accent);
+  }
+
+  .notice {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .notice code {
+    background: var(--card);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 0.95em;
+  }
+
+  .upload-error {
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fda4af;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 0.86rem;
+  }
+
+  .upload-progress {
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.35);
+    color: var(--accent-2);
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 0.86rem;
+  }
+
+  .modal-foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 16px 22px;
+    border-top: 1px solid var(--line);
+    background: var(--card);
+  }
+
+  .local-badge {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+  }
+
   @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
@@ -668,7 +920,7 @@
       display: none;
     }
 
-    .nav .btn {
+    .nav .nav-cta {
       display: none;
     }
 
@@ -703,6 +955,20 @@
     }
   }
 
+  @media (max-width: 420px) {
+    .nav a:not(.btn) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .contact-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -724,7 +990,8 @@
     <nav class="nav" aria-label="Main navigation">
       <a href="#apps">Apps</a>
       <a href="#downloads">My Downloads</a>
-      <a class="btn btn-primary btn-sm" href="#apps">Get the apps</a>
+      <button class="btn btn-ghost btn-sm nav-upload" type="button" data-open-upload>Upload</button>
+      <a class="btn btn-primary btn-sm nav-cta" href="#apps">Get the apps</a>
     </nav>
   </div>
 </header>
@@ -738,6 +1005,7 @@
         <p>Browse each release, download the latest build directly, and keep every download link saved here so it is never lost again.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#apps">Browse apps</a>
+          <button class="btn btn-ghost" type="button" data-open-upload>Upload an app</button>
           <a class="btn btn-ghost" href="#downloads">Open my downloads</a>
         </div>
         <div class="hero-stats">
@@ -804,10 +1072,95 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<dialog class="modal" id="uploadDialog" aria-labelledby="uploadTitle">
+  <form class="modal-card" method="dialog" id="uploadForm">
+    <header class="modal-head">
+      <h2 id="uploadTitle">Upload an app</h2>
+      <button class="icon-btn" type="button" id="uploadClose" aria-label="Close upload dialog">&times;</button>
+    </header>
+
+    <div class="modal-body">
+      <input type="file" id="fileInput" hidden>
+      <label class="dropzone" id="dropzone">
+        <span class="dropzone-title">Drop the build here, or click to choose a file</span>
+        <span class="dropzone-hint">Any file type works. APKs, zips, installers, archives.</span>
+        <span class="file-info" id="fileInfo">No file chosen yet</span>
+      </label>
+
+      <div class="fields">
+        <div class="field">
+          <label for="fieldName">App name</label>
+          <input type="text" id="fieldName" placeholder="My Cool App" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fieldId">Folder id</label>
+          <input type="text" id="fieldId" placeholder="my-cool-app" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fieldCategory">Category</label>
+          <select id="fieldCategory">
+            <option>Utilities</option>
+            <option>Productivity</option>
+            <option>Tools</option>
+            <option>Games</option>
+            <option>Media</option>
+            <option>Education</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fieldVersion">Version</label>
+          <input type="text" id="fieldVersion" value="1.0.0" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fieldDeveloper">Developer</label>
+          <input type="text" id="fieldDeveloper" value="Sachin" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="fieldWebsite">Website (optional)</label>
+          <input type="url" id="fieldWebsite" placeholder="https://example.com" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label for="fieldDescription">Description</label>
+          <textarea id="fieldDescription" placeholder="What the app does."></textarea>
+        </div>
+      </div>
+
+      <details class="token-panel" id="tokenPanel">
+        <summary>Publish to the live site (needs a GitHub token)</summary>
+        <div class="token-body">
+          <p class="notice">Saving to your device needs no setup. Publishing writes the build into the repository so the app lives on the site for everyone, on every device, permanently. It needs a GitHub token with <code>Contents: read and write</code> on this repository only.</p>
+          <input class="field" type="password" id="tokenInput" placeholder="ghp_... or github_pat_..." autocomplete="off" style="padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--line-hi); color:var(--text); width:100%; outline:none;">
+          <p class="token-status" id="tokenStatus"></p>
+          <div class="token-actions">
+            <button class="btn btn-ghost btn-sm" type="button" id="tokenSave">Save token</button>
+            <button class="btn btn-ghost btn-sm" type="button" id="tokenClear">Clear token</button>
+            <label class="checkbox"><input type="checkbox" id="tokenRemember"> Remember on this device</label>
+          </div>
+        </div>
+      </details>
+
+      <div class="upload-error" id="uploadError" hidden></div>
+      <div class="upload-progress" id="uploadProgress" hidden></div>
+      <p class="notice">Apps saved to your device are stored in this browser only, and are removed if you clear site data. Publishing to the live site keeps them for good, on every device.</p>
+    </div>
+
+    <footer class="modal-foot">
+      <button class="btn btn-ghost" type="button" id="uploadCancel">Cancel</button>
+      <button class="btn btn-ghost" type="button" id="saveLocalBtn">Save to my device</button>
+      <button class="btn btn-primary" type="button" id="publishBtn">Publish to GitHub</button>
+    </footer>
+  </form>
+</dialog>
+
 <script src="apps.js"></script>
+<script src="store.js"></script>
+<script src="upload.js"></script>
 <script>
   (function () {
     var APPS = (Array.isArray(window.APPS)) ? window.APPS : [];
+    var LOCAL_APPS = [];
+    var blobUrls = {};
     var grid = document.getElementById('grid');
     var chips = document.getElementById('chips');
     var countEl = document.getElementById('resultCount');
@@ -920,9 +1273,26 @@
       });
     }
 
+    function catalog() {
+      return APPS.concat(LOCAL_APPS);
+    }
+
+    function fileUrl(app) {
+      if (app.source === 'local') {
+        if (!app.file) return null;
+        if (!blobUrls[app.id]) {
+          blobUrls[app.id] = URL.createObjectURL(app.file);
+        }
+        return blobUrls[app.id];
+      }
+      return app.file || null;
+    }
+
     function cardHtml(app) {
-      var hasFile = !!app.file;
+      var url = fileUrl(app);
+      var hasFile = !!url;
       var tags = '';
+      if (app.source === 'local') tags += '<span class="tag local-badge">On this device</span>';
       if (app.featured) tags += '<span class="tag tag-featured">Featured</span>';
       if (isNew(app)) tags += '<span class="tag tag-new">New</span>';
       if (app.category) tags += '<span class="tag">' + esc(app.category) + '</span>';
@@ -930,11 +1300,15 @@
       if (app.size) tags += '<span class="tag">' + esc(app.size) + '</span>';
 
       var download = hasFile
-        ? '<a class="btn btn-primary btn-sm" href="' + esc(app.file) + '" download>Download</a>'
+        ? '<a class="btn btn-primary btn-sm" href="' + esc(url) + '" download>Download</a>'
         : '<button class="btn btn-ghost btn-sm" type="button" disabled>Not uploaded</button>';
 
       var website = app.website
         ? '<a class="btn btn-ghost btn-sm" href="' + esc(app.website) + '" target="_blank" rel="noopener">Site</a>'
+        : '';
+
+      var remove = app.source === 'local'
+        ? '<button class="btn btn-ghost btn-sm" type="button" data-remove="' + esc(app.id) + '">Remove</button>'
         : '';
 
       return '<article class="app-card">' +
@@ -947,13 +1321,14 @@
         '</div>' +
         '<p class="app-desc">' + esc(app.description || 'No description provided yet.') + '</p>' +
         '<div class="app-tags">' + tags + '</div>' +
-        '<div class="app-actions">' + download + website + '</div>' +
+        '<div class="app-actions">' + download + website + remove + '</div>' +
       '</article>';
     }
 
     function render() {
+      var all = catalog();
       var query = (search.value || '').trim().toLowerCase();
-      var list = APPS.filter(function (app) {
+      var list = all.filter(function (app) {
         if (activeCat !== 'All' && app.category !== activeCat) return false;
         if (!query) return true;
         var haystack = [app.name, app.developer, app.category, app.description, app.version]
@@ -963,46 +1338,68 @@
 
       if (!list.length) {
         grid.innerHTML = '<div class="empty">' +
-          '<h3>' + (APPS.length ? 'No apps match that search' : 'No apps published yet') + '</h3>' +
-          '<p>' + (APPS.length
+          '<h3>' + (all.length ? 'No apps match that search' : 'No apps yet') + '</h3>' +
+          '<p>' + (all.length
             ? 'Try a different name, category or developer.'
-            : 'Add an entry to apps.js and upload the build into the apps folder.') + '</p>' +
+            : 'Hit Upload to add your first app, or publish one with the Upload button.') + '</p>' +
         '</div>';
       } else {
         grid.innerHTML = list.map(cardHtml).join('');
       }
 
-      countEl.textContent = list.length === APPS.length
-        ? APPS.length + (APPS.length === 1 ? ' app' : ' apps')
-        : list.length + ' of ' + APPS.length + ' apps';
+      grid.querySelectorAll('[data-remove]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-remove');
+          if (!window.AppStore) return;
+          window.AppStore.deleteLocal(id).then(function () {
+            showToast('Removed from this device');
+            loadLocal();
+          }).catch(function () {
+            showToast('Could not remove that app');
+          });
+        });
+      });
+
+      countEl.textContent = list.length === all.length
+        ? all.length + (all.length === 1 ? ' app' : ' apps')
+        : list.length + ' of ' + all.length + ' apps';
     }
 
     function renderDownloads() {
-      if (!APPS.length) {
-        dlList.innerHTML = '<div class="dl-row"><span class="dl-none">No apps yet. Links will appear here once you add an app to apps.js.</span></div>';
+      var all = catalog();
+      if (!all.length) {
+        dlList.innerHTML = '<div class="dl-row"><span class="dl-none">No apps yet. Links will appear here once you upload one.</span></div>';
         return;
       }
-      dlList.innerHTML = APPS.map(function (app) {
+      dlList.innerHTML = all.map(function (app) {
         var hue = hueFor(app.id);
         var bg = 'linear-gradient(135deg, hsl(' + hue + ', 78%, 66%), hsl(' + ((hue + 48) % 360) + ', 80%, 56%))';
         var icon = app.icon
           ? '<span class="dl-app-icon"><img src="' + esc(app.icon) + '" alt="" loading="lazy"></span>'
           : '<span class="dl-app-icon" style="background:' + bg + '" aria-hidden="true">' + esc(String(app.name || '?').trim().charAt(0).toUpperCase()) + '</span>';
 
-        var link = app.file
-          ? '<span class="dl-link"><a href="' + esc(app.file) + '" download>' + esc(absUrl(app.file)) + '</a></span>'
-          : '<span class="dl-link dl-none">No file uploaded yet</span>';
+        var isLocal = app.source === 'local';
+        var url = fileUrl(app);
 
-        var actions = app.file
-          ? '<button class="btn btn-ghost btn-sm" type="button" data-copy="' + esc(absUrl(app.file)) + '">Copy link</button>'
-          : '';
+        var link = isLocal
+          ? '<span class="dl-link dl-none">Saved on this device, no public link</span>'
+          : (url
+            ? '<span class="dl-link"><a href="' + esc(url) + '" download>' + esc(absUrl(url)) + '</a></span>'
+            : '<span class="dl-link dl-none">No file uploaded yet</span>');
+
+        var actions = isLocal
+          ? (url ? '<a class="btn btn-ghost btn-sm" href="' + esc(url) + '" download>Save file</a>' : '')
+          : (url
+            ? '<button class="btn btn-ghost btn-sm" type="button" data-copy="' + esc(absUrl(url)) + '">Copy link</button>'
+            : '');
 
         return '<div class="dl-row">' +
           '<div class="dl-app">' + icon +
             '<div><div class="dl-app-name">' + esc(app.name) + '</div>' +
             '<div class="dl-app-sub">' + esc(app.version ? 'v' + app.version : 'No version') +
               (app.size ? ' · ' + esc(app.size) : '') +
-              (app.updated ? ' · ' + esc(app.updated) : '') + '</div></div>' +
+              (app.updated ? ' · ' + esc(app.updated) : '') +
+              (isLocal ? ' · on this device' : '') + '</div></div>' +
           '</div>' +
           link +
           '<div class="dl-actions">' + actions + '</div>' +
@@ -1023,35 +1420,63 @@
     function renderStats() {
       var cats = [];
       var total = 0;
-      APPS.forEach(function (app) {
+      catalog().forEach(function (app) {
         if (app.category && cats.indexOf(app.category) === -1) cats.push(app.category);
         total += sizeToMb(app.size);
       });
-      document.getElementById('statApps').textContent = APPS.length;
+      document.getElementById('statApps').textContent = catalog().length;
       document.getElementById('statCats').textContent = cats.length;
       document.getElementById('statSize').textContent = (total >= 1024 ? (total / 1024).toFixed(1) + ' GB' : Math.round(total) + ' MB');
     }
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    var categories = [];
-    APPS.forEach(function (app) {
-      if (app.category && categories.indexOf(app.category) === -1) categories.push(app.category);
+    function renderAll() {
+      var categories = [];
+      catalog().forEach(function (app) {
+        if (app.category && categories.indexOf(app.category) === -1) categories.push(app.category);
+      });
+      if (activeCat !== 'All' && categories.indexOf(activeCat) === -1) activeCat = 'All';
+      renderChips(categories);
+      render();
+      renderDownloads();
+      renderStats();
+    }
+
+    function loadLocal() {
+      if (!window.AppStore) {
+        renderAll();
+        return Promise.resolve();
+      }
+      return window.AppStore.listLocal().then(function (rows) {
+        Object.keys(blobUrls).forEach(function (key) {
+          URL.revokeObjectURL(blobUrls[key]);
+        });
+        blobUrls = {};
+        LOCAL_APPS = rows || [];
+        renderAll();
+      }).catch(function () {
+        renderAll();
+      });
+    }
+
+    document.addEventListener('appstore:change', function (ev) {
+      if (ev.detail && ev.detail.type === 'published') {
+        showToast('Published. The site rebuilds in about a minute.');
+      }
+      loadLocal();
     });
 
-    renderChips(categories);
-    render();
-    renderDownloads();
-    renderStats();
+    loadLocal();
 
     search.addEventListener('input', render);
 
     document.getElementById('copyAll').addEventListener('click', function () {
-      var links = APPS.filter(function (a) { return !!a.file; }).map(function (a) {
+      var links = catalog().filter(function (a) { return a.source !== 'local' && !!a.file; }).map(function (a) {
         return a.name + ': ' + absUrl(a.file);
       });
       if (!links.length) {
-        showToast('No upload links yet');
+        showToast('No public links yet');
         return;
       }
       copyText(links.join('\n')).then(function () {
