@@ -107,6 +107,38 @@ function clientKey(request) {
   return request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || 'anon';
 }
 
+async function guardStub(env, request) {
+  if (!env || !env.LOGIN_GUARD || typeof env.LOGIN_GUARD.idFromName !== 'function') return null;
+  try {
+    const id = env.LOGIN_GUARD.idFromName(String(clientKey(request)).slice(0, 64));
+    return env.LOGIN_GUARD.get(id);
+  } catch (e) {
+    return null;
+  }
+}
+
+async function guardCheck(env, request) {
+  const stub = await guardStub(env, request);
+  if (!stub) return { locked: false };
+  try {
+    const res = await stub.fetch('https://guard/check');
+    const data = await res.json();
+    return data && typeof data.locked === 'boolean' ? data : { locked: false };
+  } catch (e) {
+    return { locked: false };
+  }
+}
+
+async function guardRecord(env, request, ok) {
+  const stub = await guardStub(env, request);
+  if (!stub) return;
+  try {
+    await stub.fetch('https://guard/record?ok=' + (ok ? 'true' : 'false'));
+  } catch (e) {
+    /* fail open on bookkeeping errors */
+  }
+}
+
 async function checkPassword(env, password) {
   if (!env.STORE_PASSWORD) return false;
   const given = String(password || '');
@@ -305,6 +337,13 @@ export default {
       }
 
       if (url.pathname === '/session' && request.method === 'POST') {
+        const guard = await guardCheck(env, request);
+        if (guard.locked) {
+          const wait = Math.max(1, Number(guard.retryAfter) || 60);
+          const unit = wait < 60 ? 'second' : 'minute';
+          const amount = wait < 60 ? wait : Math.ceil(wait / 60);
+          return fail(`Too many failed attempts. Try again in ${amount} ${unit}${amount === 1 ? '' : 's'}.`, 429);
+        }
         if (!(await takeLimit(env, 'LOGIN_LIMITER', clientKey(request)))) {
           return fail('Too many attempts. Wait a minute and try again.', 429);
         }
@@ -314,7 +353,9 @@ export default {
         }
         let body = {};
         try { body = await request.json(); } catch (e) { body = {}; }
-        if (!(await checkPassword(env, body.password))) {
+        const ok = await checkPassword(env, body.password);
+        await guardRecord(env, request, ok);
+        if (!ok) {
           return fail('Incorrect password.', 401);
         }
         const token = await signToken(env, 'session', SESSION_TTL);
@@ -322,6 +363,13 @@ export default {
       }
 
       if (url.pathname === '/remember' && request.method === 'POST') {
+        const guard = await guardCheck(env, request);
+        if (guard.locked) {
+          const wait = Math.max(1, Number(guard.retryAfter) || 60);
+          const unit = wait < 60 ? 'second' : 'minute';
+          const amount = wait < 60 ? wait : Math.ceil(wait / 60);
+          return fail(`Too many failed attempts. Try again in ${amount} ${unit}${amount === 1 ? '' : 's'}.`, 429);
+        }
         if (!(await takeLimit(env, 'LOGIN_LIMITER', clientKey(request)))) {
           return fail('Too many attempts. Wait a minute and try again.', 429);
         }
@@ -331,7 +379,9 @@ export default {
         }
         let body = {};
         try { body = await request.json(); } catch (e) { body = {}; }
-        if (!(await checkPassword(env, body.password))) {
+        const ok = await checkPassword(env, body.password);
+        await guardRecord(env, request, ok);
+        if (!ok) {
           return fail('Incorrect password.', 401);
         }
         const token = await signToken(env, 'remember', REMEMBER_TTL);
@@ -575,3 +625,48 @@ export default {
     }
   }
 };
+
+export class LoginGuard {
+  constructor(state, env) {
+    this.state = state;
+    this.env = env;
+  }
+
+  static backoffFor(fails) {
+    if (fails <= 3) return 0;
+    if (fails <= 5) return 10;
+    if (fails <= 8) return 60;
+    if (fails <= 12) return 300;
+    return 900;
+  }
+
+  async fetch(request) {
+    const url = new URL(request.url);
+    const now = Date.now();
+    let state = (await this.state.storage.get('lock')) || { fails: 0, blockedUntil: 0 };
+
+    if (url.pathname === '/check') {
+      const blockedUntil = Number(state.blockedUntil || 0);
+      const locked = blockedUntil > now;
+      return new Response(JSON.stringify({
+        locked,
+        retryAfter: locked ? Math.ceil((blockedUntil - now) / 1000) : 0
+      }), { headers: { 'Content-Type': 'application/json' } });
+    }
+
+    const ok = url.searchParams.get('ok') === 'true';
+    if (ok) {
+      state = { fails: 0, blockedUntil: 0 };
+    } else {
+      state.fails = (Number(state.fails) || 0) + 1;
+      const wait = LoginGuard.backoffFor(state.fails);
+      state.blockedUntil = wait ? now + wait * 1000 : 0;
+    }
+    await this.state.storage.put('lock', state);
+    return new Response(JSON.stringify({
+      ok,
+      fails: state.fails,
+      locked: Number(state.blockedUntil || 0) > Date.now()
+    }), { headers: { 'Content-Type': 'application/json' } });
+  }
+}

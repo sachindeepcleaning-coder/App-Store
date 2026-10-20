@@ -9,13 +9,14 @@ GITHUB_OWNER = "sachindeepcleaning-coder"
 GITHUB_REPO = "my-apps"
 GITHUB_BRANCH = "main"
 PASSWORD_MIN_LENGTH = "10"
+LOCKOUT_FREE_ATTEMPTS = "3"
 
 [[ratelimits]]
 name = "LOGIN_LIMITER"
 namespace_id = "1001"
 
   [ratelimits.simple]
-  limit = 5
+  limit = 10
   period = 60
 
 [[ratelimits]]
@@ -25,3 +26,11 @@ namespace_id = "1002"
   [ratelimits.simple]
   limit = 30
   period = 60
+
+[[durable_objects.bindings]]
+name = "LOGIN_GUARD"
+class_name = "LoginGuard"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LoginGuard"]

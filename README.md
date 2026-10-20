@@ -31,8 +31,8 @@ Tick **Remember on this device** and the Worker issues a long-lived signed token
 | --- | --- |
 | Password | Checked by the Worker against a secret. Never in the page, never in the browser storage, never in a URL or a log. |
 | Password policy | The Worker refuses to run if the stored password is under 10 characters. |
-| Rate limiting | Login attempts are throttled per client. Excessive attempts get `429`. |
-| Login attempt cap | 5 password attempts per 60 seconds. |
+| Rate limiting | Two layers. A coarse per-client limit of 10 requests per 60 seconds, plus an exact lockout counter. |
+| Failed login backoff | The first 3 wrong passwords are answered normally. After that each further failure backs off: 10s, 60s, 5 min, 15 min. The counter resets the moment you sign in correctly. |
 | Write attempts | 30 catalogue or upload operations per 60 seconds. |
 | Session token | Signed, scoped to the store, 1 hour. |
 | Remember token | Signed, scoped to the store, 30 days, revocable by changing the store password. |
