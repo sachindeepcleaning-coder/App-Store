@@ -9,13 +9,19 @@ Upload apps straight from the site, download them later, and keep every download
 | File | Purpose |
 | --- | --- |
 | `index.html` | The store page, styles and grid rendering. |
-| `apps.js` | Catalogue of apps published for everyone. |
+| `apps.js` | Reserved for a static catalogue. Empty, because the live catalogue is private. |
 | `config.js` | Site configuration. |
-| `store.js` | Browser storage (IndexedDB) and public publishing. |
+| `store.js` | Browser storage (IndexedDB). |
 | `vault.js` | Client for the private store. |
 | `upload.js` | The upload dialog. |
-| `apps/` | Where published build files live, one folder per app. |
+| `worker/` | Source for the Cloudflare Worker that guards the private store. |
 | `CNAME` | Binds the site to `sachinapp.store`. |
+
+The site itself is a login screen. Nothing about your apps is in the page: the app list is served by the Worker only to an unlocked session, and the builds are never on the public repository at all.
+
+## Signing in
+
+Open the site and you get a password prompt. The password is checked by the Worker, not by the page, so it is never embedded in the HTML. Tick **Remember on this device** and the site signs itself back in on later visits; leave it unticked and you are asked every time. Sessions expire after an hour either way.
 
 ## Where you can store an upload
 
@@ -33,25 +39,27 @@ No setup. The file is stored in your browser (IndexedDB), shows up with an **On 
 
 ## Editing the catalogue by hand
 
-You can still add entries to `apps.js` directly. Upload the build into `apps/<id>/`, add the entry, push.
+The catalogue lives in the private repository, in `catalogue.json` at its root. Each entry looks like this:
 
-```js
+```json
 {
-  id: "my-cool-app",
-  name: "My Cool App",
-  developer: "Sachin",
-  category: "Utilities",
-  version: "1.0.0",
-  size: "12.4 MB",
-  description: "What the app does.",
-  icon: null,                                 // optional path to an image
-  file: "apps/my-cool-app/my-cool-app.apk",   // null keeps the Download button disabled
-  website: null,                              // optional external link
-  updated: "2026-10-20",
-  featured: false,
-  rating: null
+  "id": "my-cool-app",
+  "name": "My Cool App",
+  "developer": "Sachin",
+  "category": "Utilities",
+  "version": "1.0.0",
+  "size": "12.4 MB",
+  "description": "What the app does.",
+  "fileName": "my-cool-app-1.0.0.apk",
+  "releaseId": 123456,
+  "assetId": 234567,
+  "updated": "2026-10-20",
+  "featured": false,
+  "shareId": null
 }
 ```
+
+Editing that file in the private repo updates the store within a minute. Uploading a new build through the site does it for you.
 
 ## Field reference
 

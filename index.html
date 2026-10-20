@@ -959,6 +959,97 @@
     display: none;
   }
 
+  .lock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(900px 500px at 15% -10%, rgba(124, 92, 255, 0.22), transparent 60%),
+      radial-gradient(760px 460px at 85% 0%, rgba(34, 211, 238, 0.12), transparent 62%),
+      var(--bg);
+  }
+
+  body.locked .lock-screen {
+    display: grid;
+  }
+
+  body.locked main,
+  body.locked .site-footer {
+    display: none;
+  }
+
+  .lock-card {
+    width: min(400px, 100%);
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    padding: 36px 30px 30px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--line-hi);
+    border-radius: 22px;
+    box-shadow: 0 30px 70px rgba(2, 6, 20, 0.6);
+  }
+
+  .lock-card .brand-mark {
+    width: 52px;
+    height: 52px;
+    flex-basis: 52px;
+    border-radius: 15px;
+    font-size: 1.15rem;
+  }
+
+  .lock-card h1 {
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .lock-sub {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: -4px;
+  }
+
+  .lock-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-hi);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    text-align: center;
+  }
+
+  .lock-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.16);
+  }
+
+  .lock-card .btn {
+    width: 100%;
+    padding: 13px 22px;
+  }
+
+  .lock-remember {
+    justify-content: center;
+  }
+
+  .lock-error {
+    font-size: 0.86rem;
+    color: #fda4af;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    border-radius: 10px;
+    padding: 9px 13px;
+    width: 100%;
+  }
+
   @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
@@ -1040,7 +1131,7 @@
   }
 </style>
 </head>
-<body>
+<body class="locked">
 <header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="#top">
@@ -1131,6 +1222,18 @@
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="lock-screen" id="lockScreen">
+  <form class="lock-card" id="lockForm" autocomplete="off">
+    <span class="brand-mark" aria-hidden="true">SA</span>
+    <h1>Sachin App Store</h1>
+    <p class="lock-sub">This store is private. Enter your password to continue.</p>
+    <input class="lock-input" type="password" id="lockPassword" placeholder="Password" autocomplete="current-password" aria-label="Store password">
+    <button class="btn btn-primary" type="submit" id="lockBtn">Unlock</button>
+    <label class="checkbox lock-remember"><input type="checkbox" id="lockRemember" checked> Remember on this device</label>
+    <p class="lock-error" id="lockError" hidden></p>
+  </form>
+</div>
 
 <dialog class="modal" id="uploadDialog" aria-labelledby="uploadTitle">
   <form class="modal-card" method="dialog" id="uploadForm">
@@ -1381,6 +1484,10 @@
 
     function handlePrivateError(err, action) {
       var message = err && err.message ? err.message : '';
+      if (err && err.status === 401) {
+        lockStore();
+        return;
+      }
       if (/unlock/i.test(message) && window.AppStoreUI) {
         window.AppStoreUI.showPrivate('Unlock the private store to ' + action + '.');
         return;
@@ -1643,7 +1750,11 @@
       return window.Vault.catalogue().then(function (apps) {
         PRIVATE_APPS = apps || [];
         renderAll();
-      }).catch(function () {
+      }).catch(function (err) {
+        if (err && err.status === 401) {
+          lockStore();
+          return;
+        }
         renderAll();
       });
     }
@@ -1651,6 +1762,62 @@
     function refreshAll() {
       return Promise.all([loadLocal(), loadPrivate()]);
     }
+
+    var lockScreen = document.getElementById('lockScreen');
+    var lockForm = document.getElementById('lockForm');
+    var lockPassword = document.getElementById('lockPassword');
+    var lockBtn = document.getElementById('lockBtn');
+    var lockError = document.getElementById('lockError');
+    var lockRemember = document.getElementById('lockRemember');
+
+    function lockStore() {
+      document.body.classList.add('locked');
+      PRIVATE_APPS = [];
+      LOCAL_APPS = [];
+      Object.keys(blobUrls).forEach(function (key) {
+        URL.revokeObjectURL(blobUrls[key]);
+      });
+      blobUrls = {};
+      renderAll();
+      setTimeout(function () {
+        if (lockPassword) lockPassword.focus();
+      }, 120);
+    }
+
+    function unlockStore(pass) {
+      lockError.hidden = true;
+      lockBtn.disabled = true;
+      return window.Vault.unlock(pass).then(function () {
+        if (lockRemember.checked) {
+          window.Vault.setPassword(pass);
+        } else {
+          window.Vault.setPassword('');
+        }
+        lockPassword.value = '';
+        document.body.classList.remove('locked');
+        return refreshAll().then(function () {
+          showToast('Welcome back');
+        });
+      }).catch(function (err) {
+        lockError.textContent = err && err.status === 401
+          ? 'That password is not correct.'
+          : (err && err.message ? err.message : 'Could not reach the store.');
+        lockError.hidden = false;
+      }).then(function () {
+        lockBtn.disabled = false;
+      });
+    }
+
+    lockForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var pass = lockPassword.value.trim();
+      if (!pass) {
+        lockError.textContent = 'Enter your password.';
+        lockError.hidden = false;
+        return;
+      }
+      unlockStore(pass);
+    });
 
     document.addEventListener('appstore:change', function (ev) {
       if (ev.detail && ev.detail.type === 'unlocked') {
@@ -1665,7 +1832,22 @@
       refreshAll();
     });
 
-    refreshAll();
+    (function boot() {
+      var remembered = window.Vault ? window.Vault.password() : '';
+      if (!remembered) {
+        lockStore();
+        return;
+      }
+      lockPassword.value = remembered;
+      window.Vault.unlock(remembered).then(function () {
+        document.body.classList.remove('locked');
+        lockPassword.value = '';
+        refreshAll();
+      }).catch(function () {
+        window.Vault.setPassword('');
+        lockStore();
+      });
+    })();
 
     search.addEventListener('input', render);
 

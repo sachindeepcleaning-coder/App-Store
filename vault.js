@@ -114,7 +114,9 @@ window.Vault = (function () {
   }
 
   function catalogue() {
-    return request('/catalogue').then(function (data) {
+    return ensureToken().then(function (tok) {
+      return request('/catalogue', { token: tok });
+    }).then(function (data) {
       return Array.isArray(data.apps) ? data.apps : [];
     });
   }

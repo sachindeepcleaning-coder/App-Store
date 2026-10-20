@@ -221,6 +221,9 @@ export default {
       }
 
       if (url.pathname === '/catalogue' && request.method === 'GET') {
+        if (!(await verifyToken(env, tokenHeader, 'session'))) {
+          return fail('Unlock the store to see the catalogue.', 401);
+        }
         const { items } = await readCatalogue(env);
         const publicView = items.map((item) => ({
           id: item.id,
