@@ -337,6 +337,40 @@
     refreshVaultStatus();
   });
 
+  el('vaultUnlock').addEventListener('click', function () {
+    showError('');
+    showProgress('');
+    var url = (workerUrlInput.value || '').trim();
+    if (url) vault.setWorkerUrl(url);
+
+    var pass = vaultPassword.value.trim();
+    if (!pass) {
+      showError('Enter your private store password.');
+      return;
+    }
+    if (vaultRemember.checked) {
+      vault.setPassword(pass);
+    } else {
+      vault.setPassword('');
+    }
+
+    el('vaultUnlock').disabled = true;
+    showProgress('Unlocking the store…');
+    vault.unlock(pass).then(function () {
+      el('vaultUnlock').disabled = false;
+      showProgress('');
+      showError('');
+      refreshVaultStatus();
+      closeDialog();
+      emitChange({ type: 'unlocked' });
+    }).catch(function (err) {
+      el('vaultUnlock').disabled = false;
+      showProgress('');
+      var message = err && err.status === 401 ? 'That password was not accepted.' : (err && err.message ? err.message : 'Could not unlock the store.');
+      showError(message);
+    });
+  });
+
   fileInput.addEventListener('change', function () {
     setFile(fileInput.files && fileInput.files[0]);
   });

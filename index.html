@@ -1211,8 +1211,9 @@
         </div>
         <p class="token-status" id="vaultStatus"></p>
         <div class="token-actions">
-          <label class="checkbox"><input type="checkbox" id="vaultRemember" checked> Remember on this device</label>
+          <button class="btn btn-primary btn-sm" type="button" id="vaultUnlock">Unlock</button>
           <button class="btn btn-ghost btn-sm" type="button" id="vaultClear">Forget</button>
+          <label class="checkbox"><input type="checkbox" id="vaultRemember" checked> Remember on this device</label>
         </div>
       </div>
 
@@ -1651,6 +1652,10 @@
     }
 
     document.addEventListener('appstore:change', function (ev) {
+      if (ev.detail && ev.detail.type === 'unlocked') {
+        showToast('Private store unlocked');
+        return;
+      }
       if (ev.detail && ev.detail.type === 'published') {
         showToast(ev.detail.provider === 'private'
           ? 'Saved to your private store.'
