@@ -170,6 +170,14 @@ function randomId(bytes = 16) {
   return Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+function mergeEntry(items, entry) {
+  const existing = items.find((item) => item.id === entry.id);
+  if (existing && existing.shareId && !entry.shareId) {
+    entry.shareId = existing.shareId;
+  }
+  return entry;
+}
+
 async function findById(env, id) {
   const { items, sha } = await readCatalogue(env);
   return { items, sha, entry: items.find((item) => item.id === id) || null };
@@ -326,7 +334,7 @@ export default {
         };
 
         const next = items.filter((item) => item.id !== id);
-        next.push(entry);
+        next.push(mergeEntry(items, entry));
         next.__sha = sha;
         await writeCatalogue(env, next);
 
@@ -365,7 +373,7 @@ export default {
 
         const { items, sha } = await readCatalogue(env);
         const next = items.filter((item) => item.id !== payload.entry.id);
-        next.push(payload.entry);
+        next.push(mergeEntry(items, payload.entry));
         next.__sha = sha;
         await writeCatalogue(env, next);
         return json({ ok: true, app: payload.entry });
