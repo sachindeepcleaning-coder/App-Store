@@ -1,0 +1,13 @@
+name = "app-store"
+main = "index.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+GITHUB_OWNER = "sachindeepcleaning-coder"
+GITHUB_REPO = "my-apps"
+GITHUB_BRANCH = "main"
+
+# Secrets are set with `npx wrangler secret put <NAME>` and are NOT in this file:
+#   GITHUB_TOKEN   - fine-grained token for the private repo, Contents: read and write
+#   STORE_PASSWORD - the password that unlocks uploads and downloads
+#   TOKEN_SECRET   - random string used to sign session and download tickets

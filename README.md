@@ -2,56 +2,95 @@
 
 Personal app store hosted on GitHub Pages at **https://sachinapp.store/**.
 
-You can upload apps straight from the site, download them later, and keep every download link in one list.
+Upload apps straight from the site, download them later, and keep every download link in one list.
 
 ## How it works
 
-| File | Purpose |
-| --- | --- |
-| `index.html` | The store page. Layout, styles and the grid rendering all live here. |
-| `apps.js` | **The published catalogue.** One object per app that is live on the site. |
-| `store.js` | Storage layer. Saves uploads to the browser (IndexedDB) and publishes to GitHub. |
-| `upload.js` | The upload dialog: file picker, drag and drop, metadata form, token handling. |
-| `apps/` | Where published build files live, one folder per app. |
-| `CNAME` | Binds the site to `sachinapp.store`. |
+| Piece | Where it lives | Purpose |
+| --- | --- | --- |
+| `index.html` | this repo (public) | The store page, styles and grid rendering. |
+| `apps.js` | this repo (public) | Catalogue of apps published for everyone. |
+| `config.js` | this repo (public) | Points the site at your private store. |
+| `store.js` | this repo | Browser storage (IndexedDB) and GitHub publishing. |
+| `vault.js` | this repo | Client for the private store worker. |
+| `upload.js` | this repo | The upload dialog. |
+| `worker/` | this repo | Source for the Cloudflare Worker that guards the private store. |
+| `my-apps` | **separate private repo** | Your app builds, published as GitHub Releases. |
+| `sachinapp.store` | GitHub Pages | The public site. |
 
-## Uploading an app
+The split matters: the **site** is public, the **builds** are not. A Worker sits in between and holds the credentials, so the browser never sees your GitHub token and nobody can push files into your store.
 
-Click **Upload** in the header, or the **Upload an app** button in the hero. Pick a file, fill in the name, and choose one of two destinations.
+## Three places to store an upload
 
-### 1. Save to my device
+Pick one in the upload dialog.
 
-No setup, no account, works immediately. The file is stored in your browser (IndexedDB), shows up in the grid with an **On this device** badge, and gets a working **Download** button. It survives closing the tab and reloading the page.
+### 1. This device
 
-Limits worth knowing:
+No setup. The file is stored in your browser (IndexedDB), shows up with an **On this device** badge, and gets a working Download button. It survives a refresh, but it lives on that one device and browser profile, and it is gone if you clear site data.
 
-- It lives in that one browser on that one device. Another device, another browser, or clearing site data means it is gone.
-- Use this for a build you are testing, or for a file you just want to grab later.
+### 2. Private store — recommended
 
-### 2. Publish to GitHub
+Your builds go to the private `my-apps` repository as GitHub Releases. Only you can upload, and only you can download, with your password.
 
-This writes the build into the repository, so the app lives on the site permanently and is available to everyone on every device. It needs a GitHub token.
+You also get per-app **share links**: a random one-off URL for handing a single build to a friend or a tester, without exposing the rest of your store.
 
-**To get a token:** GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate. Set:
+Files up to 2 GB each. No total size limit, no bandwidth limit, and no credit card anywhere.
 
-- **Repository access:** only `App-Store`
-- **Permissions → Repository contents:** Read and write
+### 3. GitHub release
 
-Then paste the token into the **Publish to the live site** section of the upload dialog and press **Save token**. Tick *Remember on this device* if you want it kept between visits, otherwise it is discarded when the tab closes.
+Publishes into this public repository so the build is available to everyone, on every device. Needs a GitHub token with `Contents: read and write` on this repo only.
 
-The token is only ever sent to `api.github.com`. It is never included in the catalogue or shown on the page.
+## Setting up the private store
 
-**What publishing does**, in one atomic commit:
+This is the part that needs your Cloudflare login. It is about twenty minutes.
 
-1. Uploads the build to `apps/<id>/<filename>`
-2. Adds the matching entry to `apps.js`
-3. Commits both and updates `main`
+**Step 1 - the private repository** (already created):
 
-GitHub Pages then rebuilds, usually within a minute, and the app appears on the live site with a real public download link.
+```bash
+gh repo create sachindeepcleaning-coder/my-apps --private
+```
+
+**Step 2 - a fine-grained token for that repo.**
+
+GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate.
+
+- Repository access: `App-Store` → select **Only select repositories** → pick `my-apps`
+- Repository permissions → **Contents**: Read and write
+
+Copy the token. You will need it as the Worker's `GITHUB_TOKEN` secret.
+
+**Step 3 - deploy the Worker.**
+
+```bash
+cd worker
+npx wrangler login
+npx wrangler secret put GITHUB_TOKEN     # paste the token from step 2
+npx wrangler secret put STORE_PASSWORD   # your store password
+npx wrangler secret put TOKEN_SECRET     # any long random string
+npx wrangler deploy
+```
+
+`wrangler login` opens a browser so you can approve. The Worker lands on `https://app-store.sachin-cleaner.workers.dev`, which is already set in `config.js`.
+
+**Step 4 - unlock it.** Open the site, hit Upload, choose **Private store**, type your password, and remember it on the device. That is the only credential you need from then on.
+
+For `TOKEN_SECRET`, generate one with:
+
+```bash
+openssl rand -hex 32
+```
+
+## How the private store protects itself
+
+- `GITHUB_TOKEN` lives only as a Worker secret. It is never in the page, never in the repository, and never sent to the browser.
+- `STORE_PASSWORD` is also a Worker secret. The site exchanges it for a signed session token that expires after an hour.
+- Downloads use a single-app ticket that expires in 15 minutes, scoped to one file.
+- Share links are random 96-bit ids. Rotating one is a click.
+- The Worker only ever exposes `/catalogue` publicly, which contains names and versions but no download URLs.
 
 ## Editing the catalogue by hand
 
-You can still add entries to `apps.js` directly, which is the right choice if you want to commit a build together with other changes:
+You can still add entries to `apps.js` directly. Upload the build into `apps/<id>/`, add the entry, push.
 
 ```js
 {
@@ -71,8 +110,6 @@ You can still add entries to `apps.js` directly, which is the right choice if yo
 }
 ```
 
-Then upload the build into `apps/my-cool-app/` and push.
-
 ## Field reference
 
 | Field | Required | Notes |
@@ -84,15 +121,16 @@ Then upload the build into `apps/my-cool-app/` and push.
 | `version` | no | Displayed as `v1.0.0`. |
 | `size` | no | Human readable, e.g. `"12.4 MB"`. Used for the total size stat. |
 | `description` | no | Shown on the card, clamped to 3 lines. |
-| `icon` | no | Path to an image, e.g. `"apps/my-cool-app/icon.png"`. Falls back to a generated letter tile. |
+| `icon` | no | Path to an image. Falls back to a generated letter tile. |
 | `file` | no | Path to the download. **If this is `null` the Download button stays disabled.** |
 | `website` | no | External link, opens in a new tab. |
 | `updated` | no | `YYYY-MM-DD`. Apps updated within 14 days get a "New" badge. |
 | `featured` | no | `true` adds a "Featured" badge. |
 | `rating` | no | Reserved, not displayed yet. |
 
-## Notes
+## Limits worth knowing
 
+- Cloudflare Workers Free allows **100,000 requests a day** and a request body up to **100 MB**. Uploads over 95 MB skip the Worker and go straight to GitHub's release endpoint instead, which needs a GitHub token in the browser. Everything stays private either way, because the repository is private.
+- GitHub Releases allow **2 GB per asset**, no limit on total size, and no limit on bandwidth.
+- The GitHub API allows 5,000 requests an hour, which is the real ceiling on downloads if a lot of people pull files at once.
 - The three `Example App` entries in `apps.js` are placeholders. Delete them once you have real apps.
-- GitHub Pages serves files up to 1 GB, and a repository is capped at 1 GB. Very large APKs are better hosted outside the repo and linked with the `website` field. The publish button refuses files over 90 MB.
-- Published files and their links are public. GitHub Pages is a static host, so there is no way to make them private.

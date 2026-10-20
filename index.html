@@ -899,6 +899,66 @@
     color: #fbbf24;
   }
 
+  .private-badge {
+    background: rgba(124, 92, 255, 0.18);
+    border-color: rgba(124, 92, 255, 0.42);
+    color: #b9a7ff;
+  }
+
+  .dest {
+    display: grid;
+    gap: 8px;
+  }
+
+  .dest-label {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .segmented {
+    display: flex;
+    gap: 6px;
+    padding: 5px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+
+  .seg {
+    flex: 1;
+    padding: 9px 10px;
+    border-radius: 9px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background 0.18s ease, color 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .seg:hover {
+    color: var(--text);
+  }
+
+  .seg.active {
+    background: linear-gradient(135deg, var(--accent), #6344e8);
+    color: #fff;
+  }
+
+  .dest-panel {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--line);
+  }
+
+  .dest-panel[hidden] {
+    display: none;
+  }
+
   @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
@@ -1126,40 +1186,69 @@
         </div>
       </div>
 
-      <details class="token-panel" id="tokenPanel">
-        <summary>Publish to the live site (needs a GitHub token)</summary>
-        <div class="token-body">
-          <p class="notice">Saving to your device needs no setup. Publishing writes the build into the repository so the app lives on the site for everyone, on every device, permanently. It needs a GitHub token with <code>Contents: read and write</code> on this repository only.</p>
-          <input class="field" type="password" id="tokenInput" placeholder="ghp_... or github_pat_..." autocomplete="off" style="padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--line-hi); color:var(--text); width:100%; outline:none;">
-          <p class="token-status" id="tokenStatus"></p>
-          <div class="token-actions">
-            <button class="btn btn-ghost btn-sm" type="button" id="tokenSave">Save token</button>
-            <button class="btn btn-ghost btn-sm" type="button" id="tokenClear">Clear token</button>
-            <label class="checkbox"><input type="checkbox" id="tokenRemember"> Remember on this device</label>
-          </div>
+      <div class="dest">
+        <span class="dest-label">Store to</span>
+        <div class="segmented" id="destSelect" role="group" aria-label="Storage destination">
+          <button type="button" class="seg active" data-dest="device">This device</button>
+          <button type="button" class="seg" data-dest="private">Private store</button>
+          <button type="button" class="seg" data-dest="github">GitHub release</button>
         </div>
-      </details>
+      </div>
+
+      <div class="dest-panel" id="panelDevice">
+        <p class="notice">Kept in this browser only. It survives a refresh, but it lives on this device and this browser profile, and it is gone if you clear site data. Good for a build you are testing.</p>
+      </div>
+
+      <div class="dest-panel" id="panelPrivate" hidden>
+        <p class="notice">Your private store. The build goes to a private repository as a release and only you can download it, with your password. Nothing else is needed.</p>
+        <div class="field">
+          <label for="workerUrl">Store URL</label>
+          <input type="text" id="workerUrl" placeholder="https://app-store.sachin-cleaner.workers.dev" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="vaultPassword">Store password</label>
+          <input type="password" id="vaultPassword" placeholder="Your private store password" autocomplete="off">
+        </div>
+        <p class="token-status" id="vaultStatus"></p>
+        <div class="token-actions">
+          <label class="checkbox"><input type="checkbox" id="vaultRemember" checked> Remember on this device</label>
+          <button class="btn btn-ghost btn-sm" type="button" id="vaultClear">Forget</button>
+        </div>
+      </div>
+
+      <div class="dest-panel" id="panelGithub" hidden>
+        <p class="notice">Publishes into the public repository so the build lives on the site for everyone. Needs a GitHub token with <code>Contents: read and write</code> on this repository only.</p>
+        <input class="field" type="password" id="tokenInput" placeholder="ghp_... or github_pat_..." autocomplete="off" style="padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--line-hi); color:var(--text); width:100%; outline:none;">
+        <p class="token-status" id="tokenStatus"></p>
+        <div class="token-actions">
+          <button class="btn btn-ghost btn-sm" type="button" id="tokenSave">Save token</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="tokenClear">Clear token</button>
+          <label class="checkbox"><input type="checkbox" id="tokenRemember"> Remember on this device</label>
+        </div>
+      </div>
 
       <div class="upload-error" id="uploadError" hidden></div>
       <div class="upload-progress" id="uploadProgress" hidden></div>
-      <p class="notice">Apps saved to your device are stored in this browser only, and are removed if you clear site data. Publishing to the live site keeps them for good, on every device.</p>
     </div>
 
     <footer class="modal-foot">
       <button class="btn btn-ghost" type="button" id="uploadCancel">Cancel</button>
-      <button class="btn btn-ghost" type="button" id="saveLocalBtn">Save to my device</button>
-      <button class="btn btn-primary" type="button" id="publishBtn">Publish to GitHub</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" type="button" id="uploadBtn">Upload</button>
     </footer>
   </form>
 </dialog>
 
+<script src="config.js"></script>
 <script src="apps.js"></script>
 <script src="store.js"></script>
+<script src="vault.js"></script>
 <script src="upload.js"></script>
 <script>
   (function () {
     var APPS = (Array.isArray(window.APPS)) ? window.APPS : [];
     var LOCAL_APPS = [];
+    var PRIVATE_APPS = [];
     var blobUrls = {};
     var grid = document.getElementById('grid');
     var chips = document.getElementById('chips');
@@ -1274,7 +1363,7 @@
     }
 
     function catalog() {
-      return APPS.concat(LOCAL_APPS);
+      return APPS.concat(LOCAL_APPS, PRIVATE_APPS);
     }
 
     function fileUrl(app) {
@@ -1289,9 +1378,11 @@
     }
 
     function cardHtml(app) {
+      var isPrivate = app.source === 'private';
       var url = fileUrl(app);
       var hasFile = !!url;
       var tags = '';
+      if (isPrivate) tags += '<span class="tag private-badge">Private</span>';
       if (app.source === 'local') tags += '<span class="tag local-badge">On this device</span>';
       if (app.featured) tags += '<span class="tag tag-featured">Featured</span>';
       if (isNew(app)) tags += '<span class="tag tag-new">New</span>';
@@ -1299,16 +1390,22 @@
       if (app.version) tags += '<span class="tag">v' + esc(app.version) + '</span>';
       if (app.size) tags += '<span class="tag">' + esc(app.size) + '</span>';
 
-      var download = hasFile
-        ? '<a class="btn btn-primary btn-sm" href="' + esc(url) + '" download>Download</a>'
-        : '<button class="btn btn-ghost btn-sm" type="button" disabled>Not uploaded</button>';
+      var download = isPrivate
+        ? '<button class="btn btn-primary btn-sm" type="button" data-private-dl="' + esc(app.id) + '">Download</button>'
+        : (hasFile
+          ? '<a class="btn btn-primary btn-sm" href="' + esc(url) + '" download>Download</a>'
+          : '<button class="btn btn-ghost btn-sm" type="button" disabled>Not uploaded</button>');
+
+      var share = isPrivate
+        ? '<button class="btn btn-ghost btn-sm" type="button" data-share="' + esc(app.id) + '">Share</button>'
+        : '';
 
       var website = app.website
         ? '<a class="btn btn-ghost btn-sm" href="' + esc(app.website) + '" target="_blank" rel="noopener">Site</a>'
         : '';
 
-      var remove = app.source === 'local'
-        ? '<button class="btn btn-ghost btn-sm" type="button" data-remove="' + esc(app.id) + '">Remove</button>'
+      var remove = (app.source === 'local' || isPrivate)
+        ? '<button class="btn btn-ghost btn-sm" type="button" data-remove="' + esc(app.id) + '" data-source="' + esc(app.source) + '">Remove</button>'
         : '';
 
       return '<article class="app-card">' +
@@ -1321,7 +1418,7 @@
         '</div>' +
         '<p class="app-desc">' + esc(app.description || 'No description provided yet.') + '</p>' +
         '<div class="app-tags">' + tags + '</div>' +
-        '<div class="app-actions">' + download + website + remove + '</div>' +
+        '<div class="app-actions">' + download + share + website + remove + '</div>' +
       '</article>';
     }
 
@@ -1350,12 +1447,48 @@
       grid.querySelectorAll('[data-remove]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var id = btn.getAttribute('data-remove');
-          if (!window.AppStore) return;
-          window.AppStore.deleteLocal(id).then(function () {
-            showToast('Removed from this device');
-            loadLocal();
-          }).catch(function () {
-            showToast('Could not remove that app');
+          var source = btn.getAttribute('data-source') || 'local';
+          var promise = source === 'private'
+            ? window.Vault.remove(id)
+            : window.AppStore.deleteLocal(id);
+          promise.then(function () {
+            showToast('Removed');
+            refreshAll();
+          }).catch(function (err) {
+            showToast(err && err.message ? err.message : 'Could not remove that app');
+          });
+        });
+      });
+
+      grid.querySelectorAll('[data-private-dl]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-private-dl');
+          btn.disabled = true;
+          window.Vault.ticket(id).then(function (data) {
+            window.location.href = data.url;
+          }).catch(function (err) {
+            showToast(err && err.message ? err.message : 'Could not start the download');
+          }).then(function () {
+            btn.disabled = false;
+          });
+        });
+      });
+
+      grid.querySelectorAll('[data-share]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-share');
+          btn.disabled = true;
+          window.Vault.share(id).then(function (data) {
+            return copyText(data.url).then(function () {
+              showToast('Share link copied');
+            }).catch(function () {
+              showToast('Share link: ' + data.url);
+            });
+          }).catch(function (err) {
+            showToast(err && err.message ? err.message : 'Could not create a share link');
+          }).then(function () {
+            btn.disabled = false;
+            refreshAll();
           });
         });
       });
@@ -1379,19 +1512,31 @@
           : '<span class="dl-app-icon" style="background:' + bg + '" aria-hidden="true">' + esc(String(app.name || '?').trim().charAt(0).toUpperCase()) + '</span>';
 
         var isLocal = app.source === 'local';
+        var isPrivate = app.source === 'private';
         var url = fileUrl(app);
+        var shareLink = isPrivate && app.shareId ? window.Vault.shareUrl(app.shareId) : '';
 
         var link = isLocal
           ? '<span class="dl-link dl-none">Saved on this device, no public link</span>'
-          : (url
-            ? '<span class="dl-link"><a href="' + esc(url) + '" download>' + esc(absUrl(url)) + '</a></span>'
-            : '<span class="dl-link dl-none">No file uploaded yet</span>');
+          : (isPrivate
+            ? (shareLink
+              ? '<span class="dl-link"><a href="' + esc(shareLink) + '" target="_blank" rel="noopener">' + esc(shareLink) + '</a></span>'
+              : '<span class="dl-link dl-none">Private. Use Share on the card to create a link.</span>')
+            : (url
+              ? '<span class="dl-link"><a href="' + esc(url) + '" download>' + esc(absUrl(url)) + '</a></span>'
+              : '<span class="dl-link dl-none">No file uploaded yet</span>'));
 
-        var actions = isLocal
-          ? (url ? '<a class="btn btn-ghost btn-sm" href="' + esc(url) + '" download>Save file</a>' : '')
-          : (url
+        var actions;
+        if (isLocal) {
+          actions = url ? '<a class="btn btn-ghost btn-sm" href="' + esc(url) + '" download>Save file</a>' : '';
+        } else if (isPrivate) {
+          actions = '<button class="btn btn-ghost btn-sm" type="button" data-share="' + esc(app.id) + '">'
+            + (shareLink ? 'Copy share link' : 'Create share link') + '</button>';
+        } else {
+          actions = url
             ? '<button class="btn btn-ghost btn-sm" type="button" data-copy="' + esc(absUrl(url)) + '">Copy link</button>'
-            : '');
+            : '';
+        }
 
         return '<div class="dl-row">' +
           '<div class="dl-app">' + icon +
@@ -1412,6 +1557,25 @@
             showToast('Link copied to clipboard');
           }).catch(function () {
             showToast('Copy failed - select the link manually');
+          });
+        });
+      });
+
+      dlList.querySelectorAll('[data-share]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-share');
+          btn.disabled = true;
+          window.Vault.share(id).then(function (data) {
+            return copyText(data.url).then(function () {
+              showToast('Share link copied');
+            }).catch(function () {
+              showToast('Share link: ' + data.url);
+            });
+          }).catch(function (err) {
+            showToast(err && err.message ? err.message : 'Could not create a share link');
+          }).then(function () {
+            btn.disabled = false;
+            refreshAll();
           });
         });
       });
@@ -1460,19 +1624,40 @@
       });
     }
 
+    function loadPrivate() {
+      if (!window.Vault) {
+        renderAll();
+        return Promise.resolve();
+      }
+      return window.Vault.catalogue().then(function (apps) {
+        PRIVATE_APPS = apps || [];
+        renderAll();
+      }).catch(function () {
+        renderAll();
+      });
+    }
+
+    function refreshAll() {
+      return Promise.all([loadLocal(), loadPrivate()]);
+    }
+
     document.addEventListener('appstore:change', function (ev) {
       if (ev.detail && ev.detail.type === 'published') {
-        showToast('Published. The site rebuilds in about a minute.');
+        showToast(ev.detail.provider === 'private'
+          ? 'Saved to your private store.'
+          : 'Published. The site rebuilds in about a minute.');
       }
-      loadLocal();
+      refreshAll();
     });
 
-    loadLocal();
+    refreshAll();
 
     search.addEventListener('input', render);
 
     document.getElementById('copyAll').addEventListener('click', function () {
-      var links = catalog().filter(function (a) { return a.source !== 'local' && !!a.file; }).map(function (a) {
+      var links = catalog().filter(function (a) {
+        return a.source !== 'local' && a.source !== 'private' && !!a.file;
+      }).map(function (a) {
         return a.name + ': ' + absUrl(a.file);
       });
       if (!links.length) {
