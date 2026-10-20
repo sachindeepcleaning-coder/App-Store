@@ -1377,6 +1377,15 @@
       return app.file || null;
     }
 
+    function handlePrivateError(err, action) {
+      var message = err && err.message ? err.message : '';
+      if (/unlock/i.test(message) && window.AppStoreUI) {
+        window.AppStoreUI.showPrivate('Unlock the private store to ' + action + '.');
+        return;
+      }
+      showToast(message || ('Could not ' + action));
+    }
+
     function cardHtml(app) {
       var isPrivate = app.source === 'private';
       var url = fileUrl(app);
@@ -1467,7 +1476,7 @@
           window.Vault.ticket(id).then(function (data) {
             window.location.href = data.url;
           }).catch(function (err) {
-            showToast(err && err.message ? err.message : 'Could not start the download');
+            handlePrivateError(err, 'download it');
           }).then(function () {
             btn.disabled = false;
           });
@@ -1485,7 +1494,7 @@
               showToast('Share link: ' + data.url);
             });
           }).catch(function (err) {
-            showToast(err && err.message ? err.message : 'Could not create a share link');
+            handlePrivateError(err, 'create a share link');
           }).then(function () {
             btn.disabled = false;
             refreshAll();
@@ -1572,7 +1581,7 @@
               showToast('Share link: ' + data.url);
             });
           }).catch(function (err) {
-            showToast(err && err.message ? err.message : 'Could not create a share link');
+            handlePrivateError(err, 'create a share link');
           }).then(function () {
             btn.disabled = false;
             refreshAll();

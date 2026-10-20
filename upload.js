@@ -375,6 +375,18 @@
     showProgress('');
   });
 
+  window.AppStoreUI = {
+    open: openDialog,
+    showPrivate: function (message) {
+      switchDest('private');
+      openDialog();
+      if (message) showError(message);
+      setTimeout(function () {
+        if (vaultPassword) vaultPassword.focus();
+      }, 120);
+    }
+  };
+
   switchDest('device');
   refreshTokenStatus();
   refreshVaultStatus();
