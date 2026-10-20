@@ -1,6 +1,8 @@
 name = "app-store"
 main = "index.js"
 compatibility_date = "2024-11-01"
+workers_dev = true
+preview_urls = false
 
 [vars]
 GITHUB_OWNER = "sachindeepcleaning-coder"
