@@ -1,0 +1,6 @@
+SETUP.local.md
+*.local.md
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
