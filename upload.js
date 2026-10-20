@@ -27,13 +27,12 @@
   var vaultStatus = document.getElementById('vaultStatus');
   var vaultRemember = document.getElementById('vaultRemember');
 
-  var dest = 'device';
+  var dest = 'private';
   var pickedFile = null;
 
   var PANELS = {
     device: document.getElementById('panelDevice'),
-    private: document.getElementById('panelPrivate'),
-    github: document.getElementById('panelGithub')
+    private: document.getElementById('panelPrivate')
   };
 
   function el(id) {
@@ -111,7 +110,6 @@
     });
     showError('');
     if (next === 'private') refreshVaultStatus();
-    if (next === 'github') refreshTokenStatus();
   }
 
   function openDialog() {
@@ -249,49 +247,6 @@
     });
   }
 
-  function publishToGithub() {
-    showError('');
-    showProgress('');
-    if (!requireFileAndName()) return;
-
-    var token = tokenInput.value.trim() || store.getToken();
-    if (!token) {
-      showError('Add a GitHub token first.');
-      return;
-    }
-
-    var meta = readMeta();
-    meta.fileName = pickedFile.name;
-    meta.owner = 'sachindeepcleaning-coder';
-    meta.repo = 'App-Store';
-
-    uploadBtn.disabled = true;
-    showProgress('Publishing…');
-
-    store.publish(readMeta(), pickedFile, token, function (message) {
-      showProgress(message + '…');
-    }).then(function (entry) {
-      uploadBtn.disabled = false;
-      resetForm();
-      showProgress('Published. The site rebuilds in about a minute.');
-      try {
-        store.setToken(token, el('tokenRemember').checked);
-      } catch (e) {
-        showProgress('Published, but the token could not be remembered.');
-      }
-      setTimeout(function () { closeDialog(); }, 1600);
-      emitChange({ type: 'published', app: entry, provider: 'github' });
-    }).catch(function (err) {
-      uploadBtn.disabled = false;
-      var message = err && err.message ? err.message : 'Publishing failed.';
-      if (err && err.status === 401) message = 'That token was rejected. Check it and try again.';
-      if (err && err.status === 403) message = 'That token lacks permission to write to ' + store.repo + '.';
-      if (err && err.status === 404) message = 'Repo or branch not found. Check the token scopes.';
-      showError(message);
-      showProgress('');
-    });
-  }
-
   document.querySelectorAll('[data-open-upload]').forEach(function (btn) {
     btn.addEventListener('click', function (ev) {
       ev.preventDefault();
@@ -401,8 +356,7 @@
 
   uploadBtn.addEventListener('click', function () {
     if (dest === 'device') saveLocally();
-    else if (dest === 'private') publishToPrivate();
-    else publishToGithub();
+    else publishToPrivate();
   });
 
   dialog.addEventListener('close', function () {
@@ -421,7 +375,7 @@
     }
   };
 
-  switchDest('device');
+  switchDest('private');
   refreshTokenStatus();
   refreshVaultStatus();
 })();

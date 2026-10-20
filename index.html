@@ -1189,21 +1189,16 @@
       <div class="dest">
         <span class="dest-label">Store to</span>
         <div class="segmented" id="destSelect" role="group" aria-label="Storage destination">
-          <button type="button" class="seg active" data-dest="device">This device</button>
-          <button type="button" class="seg" data-dest="private">Private store</button>
-          <button type="button" class="seg" data-dest="github">GitHub release</button>
+          <button type="button" class="seg active" data-dest="private">Private store</button>
+          <button type="button" class="seg" data-dest="device">This device</button>
         </div>
       </div>
 
-      <div class="dest-panel" id="panelDevice">
-        <p class="notice">Kept in this browser only. It survives a refresh, but it lives on this device and this browser profile, and it is gone if you clear site data. Good for a build you are testing.</p>
-      </div>
-
-      <div class="dest-panel" id="panelPrivate" hidden>
-        <p class="notice">Your private store. The build goes to a private repository as a release and only you can download it, with your password. Nothing else is needed.</p>
+      <div class="dest-panel" id="panelPrivate">
+        <p class="notice">Your private store. The build goes to a private repository and only you can upload or download it, with your password. This is the one you want.</p>
         <div class="field">
           <label for="workerUrl">Store URL</label>
-          <input type="text" id="workerUrl" placeholder="https://app-store.sachin-cleaner.workers.dev" autocomplete="off">
+          <input type="text" id="workerUrl" placeholder="https://app-store.sachindeepcleaning.workers.dev" autocomplete="off">
         </div>
         <div class="field">
           <label for="vaultPassword">Store password</label>
@@ -1215,17 +1210,23 @@
           <button class="btn btn-ghost btn-sm" type="button" id="vaultClear">Forget</button>
           <label class="checkbox"><input type="checkbox" id="vaultRemember" checked> Remember on this device</label>
         </div>
+        <details class="token-panel">
+          <summary>Only needed for files over 95 MB</summary>
+          <div class="token-body">
+            <p class="notice">Very large builds go straight to the private repository, which needs a GitHub token with <code>Contents: read and write</code> on the <code>my-apps</code> repository. Anything under 95 MB does not need this.</p>
+            <input class="field" type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off" style="padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--line-hi); color:var(--text); width:100%; outline:none;">
+            <p class="token-status" id="tokenStatus"></p>
+            <div class="token-actions">
+              <button class="btn btn-ghost btn-sm" type="button" id="tokenSave">Save token</button>
+              <button class="btn btn-ghost btn-sm" type="button" id="tokenClear">Clear token</button>
+              <label class="checkbox"><input type="checkbox" id="tokenRemember"> Remember on this device</label>
+            </div>
+          </div>
+        </details>
       </div>
 
-      <div class="dest-panel" id="panelGithub" hidden>
-        <p class="notice">Publishes into the public repository so the build lives on the site for everyone. Needs a GitHub token with <code>Contents: read and write</code> on this repository only.</p>
-        <input class="field" type="password" id="tokenInput" placeholder="ghp_... or github_pat_..." autocomplete="off" style="padding:11px 13px; border-radius:10px; background:var(--card); border:1px solid var(--line-hi); color:var(--text); width:100%; outline:none;">
-        <p class="token-status" id="tokenStatus"></p>
-        <div class="token-actions">
-          <button class="btn btn-ghost btn-sm" type="button" id="tokenSave">Save token</button>
-          <button class="btn btn-ghost btn-sm" type="button" id="tokenClear">Clear token</button>
-          <label class="checkbox"><input type="checkbox" id="tokenRemember"> Remember on this device</label>
-        </div>
+      <div class="dest-panel" id="panelDevice" hidden>
+        <p class="notice">Kept in this browser only. It survives a refresh, but it lives on this device and this browser profile, and it is gone if you clear site data. Good for a build you are testing.</p>
       </div>
 
       <div class="upload-error" id="uploadError" hidden></div>

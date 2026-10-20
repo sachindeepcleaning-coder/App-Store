@@ -21,19 +21,15 @@ Upload apps straight from the site, download them later, and keep every download
 
 Pick one in the upload dialog.
 
-### This device
-
-No setup. The file is stored in your browser (IndexedDB), shows up with an **On this device** badge, and gets a working Download button. It survives a refresh, but it lives on that one device and browser profile, and it is gone if you clear site data.
-
-### Private store
+### Private store — the default
 
 Your builds are kept somewhere only you can reach. Only you can upload, and only you can download, with your password. It also gives you per-app **share links**: a random one-off URL for handing a single build to a friend or a tester, without exposing the rest of your store.
 
-Files up to 2 GB each, with no total size limit and no bandwidth limit.
+Files up to 2 GB each, with no total size limit and no bandwidth limit. Builds over 95 MB are uploaded straight to the private repository, which needs a GitHub token scoped to it.
 
-### GitHub release
+### This device
 
-Publishes into this repository so the build is available to everyone, on every device. Needs a GitHub token with `Contents: read and write` on this repo only.
+No setup. The file is stored in your browser (IndexedDB), shows up with an **On this device** badge, and gets a working Download button. It survives a refresh, but it lives on that one device and browser profile, and it is gone if you clear site data.
 
 ## Editing the catalogue by hand
 
