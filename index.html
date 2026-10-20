@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sachin Deep Cleaning</title>
-<meta name="description" content="Sachin Deep Cleaning - professional deep cleaning services for homes, offices and commercial spaces. Reliable, affordable and thorough. Book a free quote today.">
-<meta name="theme-color" content="#0f766e">
-<meta property="og:title" content="Sachin Deep Cleaning">
-<meta property="og:description" content="Professional deep cleaning services for homes, offices and commercial spaces.">
+<title>Sachin App Store</title>
+<meta name="description" content="Sachin App Store - a personal app library. Browse every app, download the latest build, and find any direct download link in one place.">
+<meta name="theme-color" content="#070b16">
+<meta property="og:title" content="Sachin App Store">
+<meta property="og:description" content="Your personal app library. Browse, download, and keep every link in one place.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://sachinapp.store/">
 <link rel="canonical" href="https://sachinapp.store/">
@@ -19,32 +19,48 @@
   }
 
   :root {
-    --teal-900: #0b3b38;
-    --teal-700: #0f766e;
-    --teal-600: #12907f;
-    --teal-100: #d7f2ee;
-    --teal-50: #f0fbf9;
-    --amber-500: #f59e0b;
-    --slate-700: #334155;
-    --slate-500: #64748b;
-    --slate-200: #e2e8f0;
-    --white: #ffffff;
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.10);
-    --radius: 14px;
-    --container: 1140px;
+    --bg: #070b16;
+    --bg-soft: #0b1020;
+    --card: #111a2e;
+    --card-hi: #16203a;
+    --line: rgba(255, 255, 255, 0.09);
+    --line-hi: rgba(255, 255, 255, 0.16);
+    --text: #e9edf7;
+    --muted: #8f9cba;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --ok: #34d399;
+    --radius: 18px;
+    --container: 1180px;
+    --shadow: 0 18px 44px rgba(2, 6, 20, 0.55);
   }
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 86px;
   }
 
   body {
     font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.65;
-    color: var(--slate-700);
-    background: var(--white);
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
     -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(900px 500px at 12% -8%, rgba(124, 92, 255, 0.22), transparent 60%),
+      radial-gradient(760px 460px at 88% 4%, rgba(34, 211, 238, 0.14), transparent 62%);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
   img {
@@ -52,9 +68,12 @@
     display: block;
   }
 
-  a {
+  button {
+    font: inherit;
     color: inherit;
-    text-decoration: none;
+    border: 0;
+    background: none;
+    cursor: pointer;
   }
 
   .container {
@@ -67,10 +86,10 @@
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 50;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--slate-200);
+    z-index: 60;
+    background: rgba(7, 11, 22, 0.82);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
   }
 
   .header-inner {
@@ -78,17 +97,15 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    min-height: 70px;
-    flex-wrap: wrap;
+    min-height: 68px;
   }
 
   .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.15rem;
+    gap: 11px;
     font-weight: 700;
-    color: var(--teal-900);
+    font-size: 1.1rem;
     letter-spacing: -0.01em;
   }
 
@@ -98,29 +115,31 @@
     width: 38px;
     height: 38px;
     flex: 0 0 38px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--teal-600), var(--teal-900));
-    color: var(--white);
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #08101f;
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .nav {
     display: flex;
     align-items: center;
-    gap: 26px;
+    gap: 8px;
   }
 
   .nav a:not(.btn) {
-    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 0.92rem;
     font-weight: 500;
-    color: var(--slate-700);
-    transition: color 0.2s ease;
+    color: var(--muted);
+    transition: color 0.18s ease, background 0.18s ease;
   }
 
-  .nav a:not(.btn):hover,
-  .nav a:not(.btn):focus-visible {
-    color: var(--teal-700);
+  .nav a:not(.btn):hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
   }
 
   .btn {
@@ -128,443 +147,554 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 13px 26px;
+    padding: 11px 22px;
     border-radius: 999px;
-    border: 2px solid transparent;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+    white-space: nowrap;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
   }
 
   .btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 
   .btn-primary {
-    background: var(--teal-700);
-    color: var(--white);
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, var(--accent), #6344e8);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(124, 92, 255, 0.32);
   }
 
   .btn-primary:hover {
-    background: var(--teal-600);
-  }
-
-  .btn-outline {
-    border-color: var(--teal-700);
-    color: var(--teal-700);
-    background: transparent;
-  }
-
-  .btn-outline:hover {
-    background: var(--teal-50);
+    box-shadow: 0 14px 32px rgba(124, 92, 255, 0.42);
   }
 
   .btn-ghost {
-    background: var(--white);
-    color: var(--teal-900);
-    box-shadow: var(--shadow-sm);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--line-hi);
+    color: var(--text);
   }
 
   .btn-ghost:hover {
-    background: var(--teal-50);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .btn-sm {
+    padding: 9px 16px;
+    font-size: 0.86rem;
+  }
+
+  .btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 
   .hero {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(160deg, var(--teal-900) 0%, var(--teal-700) 55%, var(--teal-600) 100%);
-    color: var(--white);
-    padding: 92px 0 104px;
-  }
-
-  .hero::after {
-    content: "";
-    position: absolute;
-    right: -140px;
-    top: -140px;
-    width: 420px;
-    height: 420px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.07);
-  }
-
-  .hero::before {
-    content: "";
-    position: absolute;
-    left: -100px;
-    bottom: -180px;
-    width: 360px;
-    height: 360px;
-    border-radius: 50%;
-    background: rgba(245, 158, 11, 0.14);
+    padding: 76px 0 46px;
   }
 
   .hero-inner {
-    position: relative;
-    z-index: 1;
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 56px;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 52px;
     align-items: center;
   }
 
   .eyebrow {
     display: inline-block;
-    padding: 7px 16px;
+    padding: 6px 14px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    font-size: 0.8rem;
+    background: rgba(124, 92, 255, 0.16);
+    border: 1px solid rgba(124, 92, 255, 0.34);
+    color: #b9a7ff;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    margin-bottom: 22px;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.1rem, 5.2vw, 3.4rem);
-    line-height: 1.15;
-    letter-spacing: -0.025em;
-    color: var(--white);
     margin-bottom: 20px;
   }
 
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.3rem);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+    background: linear-gradient(120deg, #ffffff 30%, #b9a7ff 75%, #7ce3f5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .hero p {
-    font-size: 1.08rem;
-    color: rgba(255, 255, 255, 0.86);
-    max-width: 54ch;
-    margin-bottom: 32px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 52ch;
+    margin-bottom: 28px;
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
-  }
-
-  .hero-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(6, 20, 30, 0.28);
-  }
-
-  .hero-card h2 {
-    font-size: 1.15rem;
-    color: var(--teal-900);
-    margin-bottom: 18px;
-  }
-
-  .stat-list {
-    display: grid;
-    gap: 16px;
-  }
-
-  .stat {
-    display: flex;
-    align-items: baseline;
     gap: 12px;
-    padding-bottom: 16px;
-    border-bottom: 1px dashed var(--slate-200);
   }
 
-  .stat:last-child {
-    padding-bottom: 0;
-    border-bottom: 0;
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 34px;
   }
 
-  .stat-value {
-    font-size: 1.75rem;
+  .hstat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+
+  .hstat-value {
+    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--teal-700);
-    min-width: 74px;
-  }
-
-  .stat-label {
-    font-size: 0.92rem;
-    color: var(--slate-500);
-  }
-
-  .section {
-    padding: 84px 0;
-  }
-
-  .section-alt {
-    background: var(--teal-50);
-  }
-
-  .section-head {
-    text-align: center;
-    max-width: 640px;
-    margin: 0 auto 52px;
-  }
-
-  .section-head .eyebrow {
-    background: var(--teal-100);
-    border-color: transparent;
-    color: var(--teal-900);
-    margin-bottom: 16px;
-  }
-
-  .section-head h2 {
-    font-size: clamp(1.7rem, 3.6vw, 2.4rem);
-    line-height: 1.2;
     letter-spacing: -0.02em;
-    color: var(--teal-900);
-    margin-bottom: 14px;
   }
 
-  .section-head p {
-    color: var(--slate-500);
-    font-size: 1.02rem;
+  .hstat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(265px, 100%), 1fr));
-    gap: 26px;
+  .searchbar {
+    position: relative;
+    margin-bottom: 26px;
   }
 
-  .card {
-    background: var(--white);
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius);
-    padding: 32px 28px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--teal-100);
-  }
-
-  .card-icon {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    background: var(--teal-100);
-    color: var(--teal-900);
-    font-size: 1.4rem;
-    margin-bottom: 18px;
-  }
-
-  .card h3 {
-    font-size: 1.15rem;
-    color: var(--teal-900);
-    margin-bottom: 10px;
-  }
-
-  .card p {
-    color: var(--slate-500);
-    font-size: 0.95rem;
-    margin-bottom: 18px;
-  }
-
-  .card-link {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--teal-700);
-  }
-
-  .card-link:hover {
-    text-decoration: underline;
-  }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 44px;
-    align-items: start;
-  }
-
-  .contact-grid > * {
-    min-width: 0;
-  }
-
-  .contact-list {
-    display: grid;
-    gap: 18px;
-  }
-
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--white);
-    border: 1px solid var(--slate-200);
-    border-radius: var(--radius);
-    padding: 20px 22px;
+  .searchbar input {
+    width: 100%;
+    padding: 15px 18px 15px 46px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--line-hi);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .contact-item:hover {
-    border-color: var(--teal-100);
-    box-shadow: var(--shadow-sm);
+  .searchbar input::placeholder {
+    color: #6b7899;
   }
 
-  .contact-icon {
+  .searchbar input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.16);
+  }
+
+  .searchbar svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .chips {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.87rem;
+    font-weight: 500;
+    transition: all 0.18s ease;
+  }
+
+  .chip:hover {
+    color: var(--text);
+    border-color: var(--line-hi);
+  }
+
+  .chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .result-count {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .section {
+    padding: 58px 0;
+  }
+
+  .section-head {
+    max-width: 620px;
+    margin-bottom: 34px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.5rem, 3.2vw, 2.05rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .section-head p {
+    color: var(--muted);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    gap: 20px;
+  }
+
+  .app-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    animation: rise 0.4s ease both;
+  }
+
+  .app-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-hi);
+    box-shadow: var(--shadow);
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .app-top {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .app-icon {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    border-radius: 15px;
     display: grid;
     place-items: center;
-    width: 46px;
-    height: 46px;
-    flex: 0 0 46px;
-    border-radius: 50%;
-    background: var(--teal-700);
-    color: var(--white);
-    font-size: 1.1rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #08101f;
+    overflow: hidden;
   }
 
-  .contact-text {
+  .app-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .app-meta {
     min-width: 0;
+    flex: 1;
   }
 
-  .contact-label {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--slate-500);
+  .app-name {
+    font-size: 1.06rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
     margin-bottom: 2px;
-  }
-
-  .contact-value {
-    font-size: 1.02rem;
-    font-weight: 600;
-    color: var(--teal-900);
     overflow-wrap: anywhere;
   }
 
-  .contact-value:hover {
-    color: var(--teal-600);
+  .app-dev {
+    font-size: 0.85rem;
+    color: var(--muted);
   }
 
-  .contact-note {
-    background: var(--teal-900);
-    color: rgba(255, 255, 255, 0.85);
+  .app-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .app-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .tag {
+    padding: 4px 10px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .tag-featured {
+    background: rgba(52, 211, 153, 0.14);
+    border-color: rgba(52, 211, 153, 0.3);
+    color: var(--ok);
+  }
+
+  .tag-new {
+    background: rgba(34, 211, 238, 0.14);
+    border-color: rgba(34, 211, 238, 0.3);
+    color: var(--accent-2);
+  }
+
+  .app-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: auto;
+  }
+
+  .app-actions .btn {
+    flex: 1;
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--card);
+    border: 1px dashed var(--line-hi);
     border-radius: var(--radius);
-    padding: 34px;
   }
 
-  .contact-note h3 {
-    font-size: 1.3rem;
-    color: var(--white);
-    margin-bottom: 14px;
+  .empty h3 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
   }
 
-  .contact-note p {
-    margin-bottom: 24px;
-    font-size: 0.98rem;
+  .empty p {
+    color: var(--muted);
+    font-size: 0.93rem;
   }
 
-  .contact-note .btn {
+  .dl-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .dl-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--card-hi);
+  }
+
+  .dl-head h3 {
+    font-size: 1rem;
+  }
+
+  .dl-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 2.4fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dl-row:last-child {
+    border-bottom: 0;
+  }
+
+  .dl-app {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .dl-app-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #08101f;
+    overflow: hidden;
+  }
+
+  .dl-app-icon img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dl-app-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+  }
+
+  .dl-app-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .dl-link {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .dl-link a:hover {
+    color: var(--accent-2);
+  }
+
+  .dl-none {
+    color: #6b7899;
+    font-style: italic;
+  }
+
+  .dl-actions {
+    display: flex;
+    gap: 8px;
   }
 
   .site-footer {
-    background: var(--teal-900);
-    color: rgba(255, 255, 255, 0.72);
-    padding: 34px 0;
+    border-top: 1px solid var(--line);
+    padding: 28px 0;
+    margin-top: 20px;
   }
 
   .footer-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
-  }
-
-  .footer-inner p {
-    font-size: 0.9rem;
-  }
-
-  .footer-inner a {
-    color: var(--white);
-    font-weight: 600;
+    color: var(--muted);
+    font-size: 0.88rem;
   }
 
   .footer-inner a:hover {
-    text-decoration: underline;
+    color: var(--text);
   }
 
-  .reveal {
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 26px;
+    transform: translate(-50%, 18px);
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--text);
+    color: #0a1020;
+    font-size: 0.88rem;
+    font-weight: 600;
     opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.55s ease, transform 0.55s ease;
+    pointer-events: none;
+    transition: opacity 0.24s ease, transform 0.24s ease;
+    z-index: 90;
+    box-shadow: var(--shadow);
   }
 
-  .reveal.visible {
+  .toast.show {
     opacity: 1;
-    transform: none;
+    transform: translate(-50%, 0);
   }
 
   @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
-      gap: 40px;
+      gap: 38px;
     }
 
-    .contact-grid {
+    .dl-row {
       grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .dl-actions {
+      justify-content: flex-start;
     }
   }
 
   @media (max-width: 640px) {
-    .header-inner {
-      min-height: 62px;
-      flex-wrap: nowrap;
-      gap: 10px;
-    }
-
-    .brand {
-      font-size: 1rem;
-    }
-
-    .brand-mark {
-      width: 34px;
-      height: 34px;
-      flex-basis: 34px;
-    }
-
-    .nav {
-      margin-left: auto;
-      gap: 16px;
-    }
-
-    .nav a:not(.btn) {
-      font-size: 0.88rem;
+    .brand span:not(.brand-mark) {
+      display: none;
     }
 
     .nav .btn {
-      padding: 10px 18px;
-      font-size: 0.88rem;
-    }
-
-    .contact-value {
-      font-size: 0.9rem;
-    }
-
-    .contact-item {
-      padding: 18px 20px;
-      gap: 12px;
+      display: none;
     }
 
     .hero {
-      padding: 64px 0 72px;
+      padding: 52px 0 32px;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .hstat {
+      padding: 13px 12px;
+    }
+
+    .hstat-value {
+      font-size: 1.2rem;
+    }
+
+    .hstat-label {
+      font-size: 0.66rem;
     }
 
     .section {
-      padding: 62px 0;
-    }
-
-    .section-head {
-      margin-bottom: 36px;
+      padding: 44px 0;
     }
 
     .footer-inner {
@@ -573,29 +703,13 @@
     }
   }
 
-  @media (max-width: 420px) {
-    .nav a:not(.btn) {
-      display: none;
-    }
-  }
-
-  @media (max-width: 380px) {
-    .contact-item {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
 
-    .reveal {
-      opacity: 1;
-      transform: none;
-      transition: none;
+    .app-card {
+      animation: none;
     }
   }
 </style>
@@ -604,13 +718,13 @@
 <header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="#top">
-      <span class="brand-mark" aria-hidden="true">SD</span>
-      <span>Sachin Deep Cleaning</span>
+      <span class="brand-mark" aria-hidden="true">SA</span>
+      <span>Sachin App Store</span>
     </a>
     <nav class="nav" aria-label="Main navigation">
-      <a href="#services">Services</a>
-      <a href="#contact">Contact</a>
-      <a class="btn btn-primary" href="tel:+919214004664">Call Now</a>
+      <a href="#apps">Apps</a>
+      <a href="#downloads">My Downloads</a>
+      <a class="btn btn-primary btn-sm" href="#apps">Get the apps</a>
     </nav>
   </div>
 </header>
@@ -619,122 +733,63 @@
   <section class="hero">
     <div class="container hero-inner">
       <div>
-        <span class="eyebrow">Trusted since day one</span>
-        <h1>Deep cleaning that leaves no corner untouched</h1>
-        <p>From kitchens and bathrooms to full office sanitisation, our trained team brings the sparkle back to your space — on time, every time.</p>
+        <span class="eyebrow">Personal app library</span>
+        <h1>Every app I build, in one place</h1>
+        <p>Browse each release, download the latest build directly, and keep every download link saved here so it is never lost again.</p>
         <div class="hero-actions">
-          <a class="btn btn-ghost" href="#contact">Get a Free Quote</a>
-          <a class="btn btn-outline" href="tel:+919214004664" style="border-color: rgba(255,255,255,0.6); color: #fff;">Call +91 9214004664</a>
+          <a class="btn btn-primary" href="#apps">Browse apps</a>
+          <a class="btn btn-ghost" href="#downloads">Open my downloads</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat">
+            <div class="hstat-value" id="statApps">0</div>
+            <div class="hstat-label">Apps</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-value" id="statCats">0</div>
+            <div class="hstat-label">Categories</div>
+          </div>
+          <div class="hstat">
+            <div class="hstat-value" id="statSize">0 MB</div>
+            <div class="hstat-label">Total size</div>
+          </div>
         </div>
       </div>
-      <aside class="hero-card">
-        <h2>Why people choose us</h2>
-        <div class="stat-list">
-          <div class="stat">
-            <span class="stat-value">100%</span>
-            <span class="stat-label">Satisfaction on every job</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">5+</span>
-            <span class="stat-label">Years of hands-on experience</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">24h</span>
-            <span class="stat-label">Turnaround on service requests</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">Eco</span>
-            <span class="stat-label">Safe, family-friendly products</span>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="section" id="services">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">What we do</span>
-        <h2>Our cleaning services</h2>
-        <p>Tailored packages for homes, workplaces and commercial properties. Pick what you need and we will handle the rest.</p>
-      </div>
-      <div class="cards">
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🏠</div>
-          <h3>Home Deep Cleaning</h3>
-          <p>Detailed cleaning for every room, including kitchen grease, bathroom sanitisation, dusting and a thorough floor mop.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🏢</div>
-          <h3>Office &amp; Commercial</h3>
-          <p>Workstations, conference rooms, cabins and common areas cleaned after hours so your team never loses a minute.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🧼</div>
-          <h3>Post-Renovation</h3>
-          <p>Pressure-level scrubbing, dust removal and paint spot cleaning to make a freshly finished space truly move-in ready.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🧴</div>
-          <h3>Sofa &amp; Carpet Care</h3>
-          <p>Deep vacuuming, stain lifting and fabric shampooing that restores upholstery and carpets to their original shine.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🍽️</div>
-          <h3>Kitchen &amp; Appliances</h3>
-          <p>Degreasing, descaling and interior appliance cleaning with safe products that keep your kitchen truly hygienic.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon" aria-hidden="true">🔁</div>
-          <h3>Recurring Plans</h3>
-          <p>Weekly, fortnightly or monthly schedules at a fixed monthly rate, with the same trusted team each visit.</p>
-          <a class="card-link" href="#contact">Enquire now →</a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt" id="contact">
-    <div class="container contact-grid">
       <div>
-        <div class="section-head reveal" style="text-align: left; margin: 0 0 32px;">
-          <span class="eyebrow">Get in touch</span>
-          <h2>Book your cleaning today</h2>
-          <p>Tell us what you need and we will send a clear, upfront quote — no hidden charges, no surprises.</p>
+        <div class="searchbar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input type="search" id="search" placeholder="Search apps by name, category or developer" aria-label="Search apps" autocomplete="off">
         </div>
-        <div class="contact-list reveal">
-          <a class="contact-item" href="mailto:sachindeepcleaning@gmail.com">
-            <span class="contact-icon" aria-hidden="true">✉</span>
-            <span class="contact-text">
-              <span class="contact-label">Email us</span>
-              <span class="contact-value">sachindeepcleaning@gmail.com</span>
-            </span>
-          </a>
-          <a class="contact-item" href="tel:+919214004664">
-            <span class="contact-icon" aria-hidden="true">☎</span>
-            <span class="contact-text">
-              <span class="contact-label">Call us</span>
-              <span class="contact-value">+91 9214004664</span>
-            </span>
-          </a>
-          <div class="contact-item">
-            <span class="contact-icon" aria-hidden="true">🕘</span>
-            <span class="contact-text">
-              <span class="contact-label">Working hours</span>
-              <span class="contact-value">Mon – Sat, 9:00 AM – 8:00 PM</span>
-            </span>
-          </div>
-        </div>
+        <p style="color:var(--muted); font-size:0.92rem; margin:0;">Direct builds, no redirect hoops. Every file is served straight from the store and the link stays the same every time you come back.</p>
       </div>
-      <div class="contact-note reveal">
-        <h3>Ready for a spotless space?</h3>
-        <p>Send us a quick message with your location and the type of cleaning you need. We will get back to you with a free, no-obligation quote within 24 hours.</p>
-        <a class="btn btn-ghost" href="mailto:sachindeepcleaning@gmail.com?subject=Cleaning%20Quote%20Request">Request a Free Quote</a>
+    </div>
+  </section>
+
+  <section class="section" id="apps">
+    <div class="container">
+      <div class="toolbar">
+        <div class="chips" id="chips"></div>
+        <div class="result-count" id="resultCount"></div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="downloads">
+    <div class="container">
+      <div class="section-head">
+        <h2>My downloads</h2>
+        <p>Every download link in one list, so you always know where each build lives even if you forget the URL later.</p>
+      </div>
+      <div class="dl-panel">
+        <div class="dl-head">
+          <h3>All app links</h3>
+          <button class="btn btn-ghost btn-sm" id="copyAll" type="button">Copy all links</button>
+        </div>
+        <div id="dlList"></div>
       </div>
     </div>
   </section>
@@ -742,34 +797,269 @@
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <p>&copy; <span id="year">2026</span> Sachin Deep Cleaning. All rights reserved.</p>
-    <p>Call <a href="tel:+919214004664">+91 9214004664</a> &middot; <a href="mailto:sachindeepcleaning@gmail.com">sachindeepcleaning@gmail.com</a></p>
+    <p>&copy; <span id="year">2026</span> Sachin App Store. All rights reserved.</p>
+    <p>Built with plain HTML, CSS and JavaScript. No build step, no frameworks.</p>
   </div>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="apps.js"></script>
 <script>
   (function () {
-    var yearEl = document.getElementById('year');
-    if (yearEl) {
-      yearEl.textContent = new Date().getFullYear();
+    var APPS = (Array.isArray(window.APPS)) ? window.APPS : [];
+    var grid = document.getElementById('grid');
+    var chips = document.getElementById('chips');
+    var countEl = document.getElementById('resultCount');
+    var dlList = document.getElementById('dlList');
+    var toast = document.getElementById('toast');
+    var search = document.getElementById('search');
+    var activeCat = 'All';
+    var toastTimer = null;
+
+    function esc(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    var reveals = document.querySelectorAll('.reveal');
-    if (!('IntersectionObserver' in window) || !reveals.length) {
-      reveals.forEach(function (el) { el.classList.add('visible'); });
-      return;
+    function absUrl(path) {
+      try {
+        return new URL(path, window.location.href).href;
+      } catch (e) {
+        return path;
+      }
     }
 
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
+    function hueFor(id) {
+      var s = String(id || '');
+      var h = 0x811c9dc5;
+      for (var i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 0x01000193) >>> 0;
+      }
+      return h % 360;
+    }
+
+    function iconHtml(app) {
+      var hue = hueFor(app.id);
+      var bg = 'linear-gradient(135deg, hsl(' + hue + ', 78%, 66%), hsl(' + ((hue + 48) % 360) + ', 80%, 56%))';
+      if (app.icon) {
+        return '<span class="app-icon"><img src="' + esc(app.icon) + '" alt="' + esc(app.name) + ' icon" loading="lazy"></span>';
+      }
+      var letter = String(app.name || '?').trim().charAt(0).toUpperCase();
+      return '<span class="app-icon" style="background:' + bg + '" aria-hidden="true">' + esc(letter) + '</span>';
+    }
+
+    function sizeToMb(size) {
+      if (!size) return 0;
+      var m = String(size).match(/([\d.]+)\s*(kb|mb|gb)/i);
+      if (!m) return 0;
+      var n = parseFloat(m[1]);
+      var unit = m[2].toLowerCase();
+      if (unit === 'kb') return n / 1024;
+      if (unit === 'gb') return n * 1024;
+      return n;
+    }
+
+    function isNew(app) {
+      if (!app.updated) return false;
+      var then = new Date(app.updated).getTime();
+      if (isNaN(then)) return false;
+      return (Date.now() - then) < (14 * 24 * 60 * 60 * 1000);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.remove('show');
+      }, 1900);
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function (resolve, reject) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try {
+          ok = document.execCommand('copy');
+        } catch (e) {
+          ok = false;
         }
+        document.body.removeChild(ta);
+        ok ? resolve() : reject(new Error('copy failed'));
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }
 
-    reveals.forEach(function (el) { observer.observe(el); });
+    function renderChips(categories) {
+      var html = '';
+      var all = ['All'].concat(categories);
+      all.forEach(function (cat) {
+        html += '<button type="button" class="chip' + (cat === activeCat ? ' active' : '') + '" data-cat="' + esc(cat) + '">' + esc(cat) + '</button>';
+      });
+      chips.innerHTML = html;
+      chips.querySelectorAll('.chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          activeCat = btn.getAttribute('data-cat');
+          renderChips(categories);
+          render();
+        });
+      });
+    }
+
+    function cardHtml(app) {
+      var hasFile = !!app.file;
+      var tags = '';
+      if (app.featured) tags += '<span class="tag tag-featured">Featured</span>';
+      if (isNew(app)) tags += '<span class="tag tag-new">New</span>';
+      if (app.category) tags += '<span class="tag">' + esc(app.category) + '</span>';
+      if (app.version) tags += '<span class="tag">v' + esc(app.version) + '</span>';
+      if (app.size) tags += '<span class="tag">' + esc(app.size) + '</span>';
+
+      var download = hasFile
+        ? '<a class="btn btn-primary btn-sm" href="' + esc(app.file) + '" download>Download</a>'
+        : '<button class="btn btn-ghost btn-sm" type="button" disabled>Not uploaded</button>';
+
+      var website = app.website
+        ? '<a class="btn btn-ghost btn-sm" href="' + esc(app.website) + '" target="_blank" rel="noopener">Site</a>'
+        : '';
+
+      return '<article class="app-card">' +
+        '<div class="app-top">' +
+          iconHtml(app) +
+          '<div class="app-meta">' +
+            '<h3 class="app-name">' + esc(app.name) + '</h3>' +
+            '<p class="app-dev">' + esc(app.developer || 'Sachin') + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<p class="app-desc">' + esc(app.description || 'No description provided yet.') + '</p>' +
+        '<div class="app-tags">' + tags + '</div>' +
+        '<div class="app-actions">' + download + website + '</div>' +
+      '</article>';
+    }
+
+    function render() {
+      var query = (search.value || '').trim().toLowerCase();
+      var list = APPS.filter(function (app) {
+        if (activeCat !== 'All' && app.category !== activeCat) return false;
+        if (!query) return true;
+        var haystack = [app.name, app.developer, app.category, app.description, app.version]
+          .join(' ').toLowerCase();
+        return haystack.indexOf(query) !== -1;
+      });
+
+      if (!list.length) {
+        grid.innerHTML = '<div class="empty">' +
+          '<h3>' + (APPS.length ? 'No apps match that search' : 'No apps published yet') + '</h3>' +
+          '<p>' + (APPS.length
+            ? 'Try a different name, category or developer.'
+            : 'Add an entry to apps.js and upload the build into the apps folder.') + '</p>' +
+        '</div>';
+      } else {
+        grid.innerHTML = list.map(cardHtml).join('');
+      }
+
+      countEl.textContent = list.length === APPS.length
+        ? APPS.length + (APPS.length === 1 ? ' app' : ' apps')
+        : list.length + ' of ' + APPS.length + ' apps';
+    }
+
+    function renderDownloads() {
+      if (!APPS.length) {
+        dlList.innerHTML = '<div class="dl-row"><span class="dl-none">No apps yet. Links will appear here once you add an app to apps.js.</span></div>';
+        return;
+      }
+      dlList.innerHTML = APPS.map(function (app) {
+        var hue = hueFor(app.id);
+        var bg = 'linear-gradient(135deg, hsl(' + hue + ', 78%, 66%), hsl(' + ((hue + 48) % 360) + ', 80%, 56%))';
+        var icon = app.icon
+          ? '<span class="dl-app-icon"><img src="' + esc(app.icon) + '" alt="" loading="lazy"></span>'
+          : '<span class="dl-app-icon" style="background:' + bg + '" aria-hidden="true">' + esc(String(app.name || '?').trim().charAt(0).toUpperCase()) + '</span>';
+
+        var link = app.file
+          ? '<span class="dl-link"><a href="' + esc(app.file) + '" download>' + esc(absUrl(app.file)) + '</a></span>'
+          : '<span class="dl-link dl-none">No file uploaded yet</span>';
+
+        var actions = app.file
+          ? '<button class="btn btn-ghost btn-sm" type="button" data-copy="' + esc(absUrl(app.file)) + '">Copy link</button>'
+          : '';
+
+        return '<div class="dl-row">' +
+          '<div class="dl-app">' + icon +
+            '<div><div class="dl-app-name">' + esc(app.name) + '</div>' +
+            '<div class="dl-app-sub">' + esc(app.version ? 'v' + app.version : 'No version') +
+              (app.size ? ' · ' + esc(app.size) : '') +
+              (app.updated ? ' · ' + esc(app.updated) : '') + '</div></div>' +
+          '</div>' +
+          link +
+          '<div class="dl-actions">' + actions + '</div>' +
+        '</div>';
+      }).join('');
+
+      dlList.querySelectorAll('[data-copy]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          copyText(btn.getAttribute('data-copy')).then(function () {
+            showToast('Link copied to clipboard');
+          }).catch(function () {
+            showToast('Copy failed - select the link manually');
+          });
+        });
+      });
+    }
+
+    function renderStats() {
+      var cats = [];
+      var total = 0;
+      APPS.forEach(function (app) {
+        if (app.category && cats.indexOf(app.category) === -1) cats.push(app.category);
+        total += sizeToMb(app.size);
+      });
+      document.getElementById('statApps').textContent = APPS.length;
+      document.getElementById('statCats').textContent = cats.length;
+      document.getElementById('statSize').textContent = (total >= 1024 ? (total / 1024).toFixed(1) + ' GB' : Math.round(total) + ' MB');
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    var categories = [];
+    APPS.forEach(function (app) {
+      if (app.category && categories.indexOf(app.category) === -1) categories.push(app.category);
+    });
+
+    renderChips(categories);
+    render();
+    renderDownloads();
+    renderStats();
+
+    search.addEventListener('input', render);
+
+    document.getElementById('copyAll').addEventListener('click', function () {
+      var links = APPS.filter(function (a) { return !!a.file; }).map(function (a) {
+        return a.name + ': ' + absUrl(a.file);
+      });
+      if (!links.length) {
+        showToast('No upload links yet');
+        return;
+      }
+      copyText(links.join('\n')).then(function () {
+        showToast(links.length + (links.length === 1 ? ' link copied' : ' links copied'));
+      }).catch(function () {
+        showToast('Copy failed - select the link manually');
+      });
+    });
   })();
 </script>
 </body>
